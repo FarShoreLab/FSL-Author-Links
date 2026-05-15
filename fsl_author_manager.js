@@ -1,12 +1,12 @@
 /**
- * FarShoreLab Author Links Manager (Secure Edition)
+ * FarShoreLab Author Links Manager (Secure Edition + Clean UI)
  * 
  * Centralized script to fetch and display bilingual author links dynamically.
  * Features comprehensive security countermeasures against MITM, XSS, Phishing and DDoS.
  */
 
 const FSL_AUTHOR_LINKS_URL = 'https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/links.json';
-const FSL_AUTHOR_MANAGER_VERSION = '1.1.0-secure';
+const FSL_AUTHOR_MANAGER_VERSION = '1.1.1-secure';
 
 // Security: Whitelisted domains to prevent Phishing / Hijacking
 const ALLOWED_DOMAINS = [
@@ -155,17 +155,10 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
     let t = linkData.locales[localeKey];
     let updateDate = escapeHTML(linkData.updateDate || 'Unknown');
 
-    // Status Banner HTML
-    let statusHtml = '';
-    if (isOnline) {
-        statusHtml = `<div style="background: rgba(0, 255, 0, 0.1); color: #00FF55; font-size: 11px; font-weight: bold; padding: 4px; border-radius: 4px; display: inline-block; margin-bottom: 10px;">
-                        🟢 ${isZh ? ('已联网 (最新链接: ' + updateDate + ')') : ('Online (Latest Links: ' + updateDate + ')')}
-                      </div>`;
-    } else {
-        statusHtml = `<div style="background: rgba(255, 255, 255, 0.1); color: #AAAAAA; font-size: 11px; font-weight: bold; padding: 4px; border-radius: 4px; display: inline-block; margin-bottom: 10px;">
-                        🔴 ${isZh ? ('本地离线 (本地链接: ' + updateDate + ')') : ('Offline (Local Links: ' + updateDate + ')')}
-                      </div>`;
-    }
+    // Status Indicator Logic (Clean UI)
+    let onlineStatusIcon = isOnline ? 'cloud_done' : 'cloud_off';
+    let onlineStatusColor = isOnline ? '#4CAF50' : '#E57373';
+    let onlineStatusText = isOnline ? (isZh ? '云端最新' : 'Cloud Sync') : (isZh ? '本地离线' : 'Local Offline');
 
     // Generate Buttons HTML safely
     let buttonsHtml = '';
@@ -206,11 +199,17 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
         buttons: [],
         lines: [`
             <div style="text-align: center; padding: 12px 0 0 0; margin-bottom: 15px;">
-                ${statusHtml}
                 <h3 style="margin: 0 0 8px 0;">FarShoreLab</h3>
-                <div style="color: var(--color-subtle_text); font-size: 11px; line-height: 1.5; opacity: 0.8;">
+                <div style="color: var(--color-subtle_text); font-size: 11px; line-height: 1.6; opacity: 0.85;">
                     <div>${escapeHTML(t.message)}</div>
-                    <div>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</div>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin: 2px 0;">
+                        <span>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+                        <span style="opacity: 0.3;">|</span>
+                        <span style="display: flex; align-items: center; gap: 4px; color: ${onlineStatusColor}; opacity: 0.9;" title="${isZh ? '链接更新日期' : 'Update Date'}: ${updateDate}">
+                            <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
+                            <span style="font-size: 10px;">${onlineStatusText} (${updateDate})</span>
+                        </span>
+                    </div>
                     <div>${escapeHTML(t.license)}</div>
                     ${t.overseasWarning ? t.overseasWarning : ''}
                 </div>
