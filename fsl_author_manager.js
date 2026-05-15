@@ -93,6 +93,7 @@ window.fslCopyText = function (text, type) {
 async function showFslAuthorDialog(pluginVersion = 'Unknown') {
     let linkData = LOCAL_AUTHOR_LINKS;
     let isOnline = false;
+    let timeOffset = 0; // Difference between network time and local time
 
     // Fast fail if OS reports no network
     if (typeof navigator !== 'undefined' && navigator.onLine === false) {
@@ -111,6 +112,11 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
             clearTimeout(timeoutId);
             
             if (response.ok) {
+                let serverDateStr = response.headers.get('date');
+                if (serverDateStr) {
+                    timeOffset = new Date(serverDateStr).getTime() - Date.now();
+                }
+                
                 let parsedData = await response.json();
                 
                 // Security: Schema validation to prevent Malformed JSON attacks
@@ -160,7 +166,7 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
     let updateDate = escapeHTML(linkData.updateDate || 'Unknown');
 
     if (isOnline) {
-        let now = new Date();
+        let now = new Date(Date.now() + timeOffset);
         let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000); // UTC+8
         let bjDate = new Date(localTime);
         let yyyy = bjDate.getFullYear();
@@ -249,7 +255,7 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
         clockInterval = setInterval(() => {
             let el = document.getElementById('fsl_sync_time_display');
             if (el) {
-                let now = new Date();
+                let now = new Date(Date.now() + timeOffset);
                 let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000);
                 let bjDate = new Date(localTime);
                 let yyyy = bjDate.getFullYear();
@@ -258,7 +264,12 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
                 let HH = String(bjDate.getHours()).padStart(2, '0');
                 let min = String(bjDate.getMinutes()).padStart(2, '0');
                 let ss = String(bjDate.getSeconds()).padStart(2, '0');
-                el.innerText = `${onlineStatusText} (${yyyy}-${mm}-${dd} ${HH}:${min}:${ss})`;
+                let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
+                
+                el.innerText = `${onlineStatusText} (${timeString})`;
+                if (el.parentElement) {
+                    el.parentElement.title = `${isZh ? '链接更新日期' : 'Update Date'}: ${timeString}`;
+                }
             } else {
                 clearInterval(clockInterval);
             }
