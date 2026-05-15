@@ -209,7 +209,7 @@
                             <div>${escapeHTML(t.message)}</div>
                             <div style="margin: 4px 0;">
                                 <div>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</div>
-                                <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 2px; color: ${onlineStatusColor}; opacity: 0.9;" title="${isZh ? '链接更新日期' : 'Update Date'}: ${updateDate}">
+                                <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 2px; color: ${onlineStatusColor}; opacity: 0.9;">
                                     <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                                     <span id="fsl_sync_time_display" style="font-size: 10px;">${onlineStatusText} (${updateDate})</span>
                                 </div>
@@ -248,9 +248,6 @@
                     let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
                     
                     el.innerText = `${onlineStatusText} (${timeString})`;
-                    if (el.parentElement) {
-                        el.parentElement.title = `${isZh ? '链接更新日期' : 'Update Date'}: ${timeString}`;
-                    }
                 } else {
                     clearInterval(clockInterval);
                 }
