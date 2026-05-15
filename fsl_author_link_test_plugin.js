@@ -148,7 +148,7 @@
 
         let onlineStatusIcon = isOnline ? 'cloud_done' : 'cloud_off';
         let onlineStatusColor = isOnline ? '#4CAF50' : '#E57373';
-        let onlineStatusText = isOnline ? (isZh ? '云端链接' : 'Cloud Links') : (isZh ? '本地链接' : 'Local Links');
+        let onlineStatusText = isOnline ? (isZh ? '作者链接已同步' : 'Author Links Synced') : (isZh ? '离线作者链接' : 'Offline Author Links');
 
         let buttonsHtml = '';
         if (Array.isArray(t.links)) {
@@ -188,13 +188,12 @@
                     <h3 style="margin: 0 0 8px 0;">FarShoreLab</h3>
                     <div style="color: var(--color-subtle_text); font-size: 11px; line-height: 1.6; opacity: 0.85;">
                         <div>${escapeHTML(t.message)}</div>
-                        <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin: 2px 0;">
-                            <span>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
-                            <span style="opacity: 0.3;">|</span>
-                            <span style="display: flex; align-items: center; gap: 4px; color: ${onlineStatusColor}; opacity: 0.9;" title="${isZh ? '链接更新日期' : 'Update Date'}: ${updateDate}">
+                        <div style="margin: 4px 0;">
+                            <div>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</div>
+                            <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 2px; color: ${onlineStatusColor}; opacity: 0.9;" title="${isZh ? '链接更新日期' : 'Update Date'}: ${updateDate}">
                                 <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                                 <span style="font-size: 10px;">${onlineStatusText} (${updateDate})</span>
-                            </span>
+                            </div>
                         </div>
                         <div>${escapeHTML(t.license)}</div>
                         ${t.overseasWarning ? t.overseasWarning : ''}
