@@ -86,7 +86,8 @@
         let linkData = LOCAL_AUTHOR_LINKS;
         let isOnline = false;
 
-        if (fslAuthorSessionCache) {
+        const CACHE_TTL = 10000; // 10 seconds
+        if (fslAuthorSessionCache && (Date.now() - fslAuthorSessionCache.timestamp < CACHE_TTL)) {
             linkData = fslAuthorSessionCache.data;
             isOnline = fslAuthorSessionCache.isOnline;
         } else {
@@ -121,7 +122,7 @@
             } catch (e) {
                 console.warn("FSL Author Links: Failed to fetch online links, using local fallback.");
             }
-            fslAuthorSessionCache = { data: linkData, isOnline: isOnline };
+            fslAuthorSessionCache = { data: linkData, isOnline: isOnline, timestamp: Date.now() };
         }
 
         let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');

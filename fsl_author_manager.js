@@ -97,8 +97,9 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
     let linkData = LOCAL_AUTHOR_LINKS;
     let isOnline = false;
 
-    // Use cache if available (Anti-DDoS)
-    if (fslAuthorSessionCache) {
+    // Use cache if available and not expired (10s TTL Anti-DDoS)
+    const CACHE_TTL = 10000; // 10 seconds
+    if (fslAuthorSessionCache && (Date.now() - fslAuthorSessionCache.timestamp < CACHE_TTL)) {
         linkData = fslAuthorSessionCache.data;
         isOnline = fslAuthorSessionCache.isOnline;
     } else {
@@ -141,7 +142,7 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
         }
         
         // Save to cache
-        fslAuthorSessionCache = { data: linkData, isOnline: isOnline };
+        fslAuthorSessionCache = { data: linkData, isOnline: isOnline, timestamp: Date.now() };
     }
 
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
