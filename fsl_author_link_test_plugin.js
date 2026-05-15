@@ -57,8 +57,6 @@
         }
     };
 
-    let fslAuthorSessionCache = null;
-
     function escapeHTML(str) {
         if (typeof str !== 'string') return '';
         return str.replace(/&/g, '&amp;')
@@ -86,22 +84,33 @@
         let linkData = LOCAL_AUTHOR_LINKS;
         let isOnline = false;
 
-        const CACHE_TTL = 10000; // 10 seconds
-        if (fslAuthorSessionCache && (Date.now() - fslAuthorSessionCache.timestamp < CACHE_TTL)) {
-            linkData = fslAuthorSessionCache.data;
-            isOnline = fslAuthorSessionCache.isOnline;
+        // Fast fail if OS reports no network
+        if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            isOnline = false;
         } else {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s strict timeout
+
             try {
-                const response = await fetch(FSL_AUTHOR_LINKS_URL, { cache: "no-store", timeout: 3000 });
+                // Append timestamp to forcefully bypass browser cache
+                const fetchUrl = FSL_AUTHOR_LINKS_URL + "?t=" + Date.now();
+                const response = await fetch(fetchUrl, { 
+                    cache: "no-store", 
+                    signal: controller.signal 
+                });
+                clearTimeout(timeoutId);
+                
                 if (response.ok) {
                     let parsedData = await response.json();
                     
+                    // Security: Schema validation to prevent Malformed JSON attacks
                     if (parsedData && parsedData.locales && parsedData.updateDate) {
+                        // Security: Whitelist validation (Anti-Phishing / MITM)
                         let isCompromised = false;
                         for (let locale in parsedData.locales) {
                             let links = parsedData.locales[locale].links;
                             if (Array.isArray(links)) {
-                                if (links.length > 20) {
+                                if (links.length > 20) { // Limit array size
                                     isCompromised = true; break;
                                 }
                                 for (let link of links) {
@@ -116,13 +125,17 @@
                         if (!isCompromised) {
                             linkData = parsedData;
                             isOnline = true;
+                        } else {
+                            console.error("FSL Security: Data payload rejected due to validation failure. Falling back to secure local data.");
                         }
+                    } else {
+                        console.error("FSL Security: Invalid data schema. Falling back to secure local data.");
                     }
                 }
             } catch (e) {
-                console.warn("FSL Author Links: Failed to fetch online links, using local fallback.");
+                clearTimeout(timeoutId);
+                console.warn("FSL Author Links: Network request failed or timed out.");
             }
-            fslAuthorSessionCache = { data: linkData, isOnline: isOnline, timestamp: Date.now() };
         }
 
         let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');

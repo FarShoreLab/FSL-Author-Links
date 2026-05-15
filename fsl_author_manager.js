@@ -6,7 +6,7 @@
  */
 
 const FSL_AUTHOR_LINKS_URL = 'https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/links.json';
-const FSL_AUTHOR_MANAGER_VERSION = '1.1.1-secure';
+const FSL_AUTHOR_MANAGER_VERSION = '1.1.2-secure';
 
 // Security: Whitelisted domains to prevent Phishing / Hijacking
 const ALLOWED_DOMAINS = [
@@ -57,9 +57,6 @@ const LOCAL_AUTHOR_LINKS = {
     }
 };
 
-// Security: Session Cache to prevent DDoS and Rate Limiting
-let fslAuthorSessionCache = null;
-
 // Security: XSS Sanitization helper
 function escapeHTML(str) {
     if (typeof str !== 'string') return '';
@@ -97,14 +94,22 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
     let linkData = LOCAL_AUTHOR_LINKS;
     let isOnline = false;
 
-    // Use cache if available and not expired (10s TTL Anti-DDoS)
-    const CACHE_TTL = 10000; // 10 seconds
-    if (fslAuthorSessionCache && (Date.now() - fslAuthorSessionCache.timestamp < CACHE_TTL)) {
-        linkData = fslAuthorSessionCache.data;
-        isOnline = fslAuthorSessionCache.isOnline;
+    // Fast fail if OS reports no network
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        isOnline = false;
     } else {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s strict timeout
+
         try {
-            const response = await fetch(FSL_AUTHOR_LINKS_URL, { cache: "no-store", timeout: 3000 });
+            // Append timestamp to forcefully bypass browser cache
+            const fetchUrl = FSL_AUTHOR_LINKS_URL + "?t=" + Date.now();
+            const response = await fetch(fetchUrl, { 
+                cache: "no-store", 
+                signal: controller.signal 
+            });
+            clearTimeout(timeoutId);
+            
             if (response.ok) {
                 let parsedData = await response.json();
                 
@@ -138,11 +143,9 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
                 }
             }
         } catch (e) {
-            console.warn("FSL Author Links: Failed to fetch online links, using local fallback.");
+            clearTimeout(timeoutId);
+            console.warn("FSL Author Links: Network request failed or timed out.");
         }
-        
-        // Save to cache
-        fslAuthorSessionCache = { data: linkData, isOnline: isOnline, timestamp: Date.now() };
     }
 
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
