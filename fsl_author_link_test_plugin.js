@@ -146,6 +146,19 @@
         let t = linkData.locales[localeKey];
         let updateDate = escapeHTML(linkData.updateDate || 'Unknown');
 
+        if (isOnline) {
+            let now = new Date();
+            let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000); // UTC+8
+            let bjDate = new Date(localTime);
+            let yyyy = bjDate.getFullYear();
+            let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
+            let dd = String(bjDate.getDate()).padStart(2, '0');
+            let HH = String(bjDate.getHours()).padStart(2, '0');
+            let min = String(bjDate.getMinutes()).padStart(2, '0');
+            let ss = String(bjDate.getSeconds()).padStart(2, '0');
+            updateDate = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
+        }
+
         let onlineStatusIcon = isOnline ? 'cloud_done' : 'cloud_off';
         let onlineStatusColor = isOnline ? '#4CAF50' : '#E57373';
         let onlineStatusText = isOnline ? (isZh ? '作者链接已同步' : 'Author Links Synced') : (isZh ? '离线作者链接' : 'Offline Author Links');
