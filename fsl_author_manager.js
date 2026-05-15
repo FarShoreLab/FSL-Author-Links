@@ -162,7 +162,7 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
     // Status Indicator Logic (Clean UI)
     let onlineStatusIcon = isOnline ? 'cloud_done' : 'cloud_off';
     let onlineStatusColor = isOnline ? '#4CAF50' : '#E57373';
-    let onlineStatusText = isOnline ? (isZh ? '云端最新' : 'Cloud Sync') : (isZh ? '本地离线' : 'Local Offline');
+    let onlineStatusText = isOnline ? (isZh ? '云端链接' : 'Cloud Links') : (isZh ? '本地链接' : 'Local Links');
 
     // Generate Buttons HTML safely
     let buttonsHtml = '';
