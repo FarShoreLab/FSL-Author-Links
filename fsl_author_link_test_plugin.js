@@ -200,15 +200,15 @@
                 <div style="text-align: center; padding: 12px 0 0 0; margin-bottom: 15px;">
                     <h3 style="margin: 0 0 8px 0;">FarShoreLab</h3>
                     <div style="color: var(--color-subtle_text); font-size: 11px; line-height: 1.6; opacity: 0.85;">
-                        <div>${escapeHTML(t.message)}</div>
-                        <div style="margin: 4px 0;">
-                            <div>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</div>
-                            <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 2px; color: ${onlineStatusColor}; opacity: 0.9;" title="${isZh ? '链接更新日期' : 'Update Date'}: ${updateDate}">
-                                <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
-                                <span style="font-size: 10px;">${onlineStatusText} (${updateDate})</span>
+                            <div>${escapeHTML(t.message)}</div>
+                            <div style="margin: 4px 0;">
+                                <div>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</div>
+                                <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 2px; color: ${onlineStatusColor}; opacity: 0.9;" title="${isZh ? '链接更新日期' : 'Update Date'}: ${updateDate}">
+                                    <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
+                                    <span id="fsl_sync_time_display" style="font-size: 10px;">${onlineStatusText} (${updateDate})</span>
+                                </div>
                             </div>
-                        </div>
-                        <div>${escapeHTML(t.license)}</div>
+                            <div>${escapeHTML(t.license)}</div>
                         ${t.overseasWarning ? t.overseasWarning : ''}
                     </div>
                 </div>
@@ -217,6 +217,35 @@
                 </div>
             `]
         });
+        
+        let clockInterval = null;
+        if (isOnline) {
+            aboutDialog.onCancel = function() {
+                if (clockInterval) clearInterval(clockInterval);
+            };
+            aboutDialog.onConfirm = function() {
+                if (clockInterval) clearInterval(clockInterval);
+            };
+            
+            clockInterval = setInterval(() => {
+                let el = document.getElementById('fsl_sync_time_display');
+                if (el) {
+                    let now = new Date();
+                    let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000);
+                    let bjDate = new Date(localTime);
+                    let yyyy = bjDate.getFullYear();
+                    let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
+                    let dd = String(bjDate.getDate()).padStart(2, '0');
+                    let HH = String(bjDate.getHours()).padStart(2, '0');
+                    let min = String(bjDate.getMinutes()).padStart(2, '0');
+                    let ss = String(bjDate.getSeconds()).padStart(2, '0');
+                    el.innerText = `${onlineStatusText} (${yyyy}-${mm}-${dd} ${HH}:${min}:${ss})`;
+                } else {
+                    clearInterval(clockInterval);
+                }
+            }, 1000);
+        }
+        
         aboutDialog.show();
     }
     // --- Embedded Manager Code End ---
