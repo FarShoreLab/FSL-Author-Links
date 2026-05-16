@@ -82,7 +82,7 @@ const LOCAL_AUTHOR_LINKS = {
             ],
             "updateInstructionsHtml": `
                 <div style="padding: 20px 0; font-size: 13px; line-height: 1.8; color: #ffffff; text-align: center;">
-                    <i class="material-icons" style="font-size: 48px; color: #E57373; display: inline-block; margin-bottom: 15px; overflow: visible; position: relative; left: -33px;">language</i>
+                    <i class="material-icons" style="font-size: 48px; color: #E57373; display: inline-block; margin-bottom: 15px; overflow: visible; position: relative; left: -11px;">language</i>
                     <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">Currently, no overseas sales channels are open.</div>
                     <div style="opacity: 0.7; font-size: 11px;">
                         This plugin is only authorized for use in Mainland China.<br/>
@@ -156,13 +156,17 @@ window.fslShowUpdateInstructions = function () {
     let localesSource = window.fslCurrentLocales || LOCAL_AUTHOR_LINKS.locales;
     let t = localesSource[localeKey] || localesSource['en'] || LOCAL_AUTHOR_LINKS.locales[localeKey];
     let instructionsHtml = t.updateInstructionsHtml || LOCAL_AUTHOR_LINKS.locales[localeKey].updateInstructionsHtml;
+    // Force overseas message for English to ensure compliance regardless of cloud data
+    if (!isZh) {
+        instructionsHtml = LOCAL_AUTHOR_LINKS.locales['en'].updateInstructionsHtml;
+    }
 
     let updateDateStr = window.fslCurrentUpdateDate || LOCAL_AUTHOR_LINKS.updateDate;
     let dateFooter = `<div style="text-align: right; font-size: 10px; opacity: 0.4; margin-top: 10px; padding-right: 5px;">${isZh ? '流程最后同步' : 'Steps last synced'}: ${escapeHTML(updateDateStr)}</div>`;
 
     new Dialog({
         id: 'fsl_update_instructions',
-        title: isZh ? '获取更新步骤' : 'Update Steps',
+        title: isZh ? '获取更新步骤' : 'Attention',
         width: 340,
         buttons: [],
         lines: [instructionsHtml + dateFooter]
