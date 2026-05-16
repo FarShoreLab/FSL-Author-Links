@@ -123,22 +123,23 @@ window.fslShowUpdateInstructions = function() {
             <div style="padding: 10px; font-size: 13px; line-height: 1.8; color: #ffffff;">
                 <div style="margin-bottom: 12px;">
                     <span style="color: var(--color-accent); font-weight: bold;">1. </span>
-                    <span style="cursor: pointer; text-decoration: underline;" onclick="window.fslCopyText('pd31262197', '${isZh ? '频道 ID' : 'Channel ID'}')">
-                        ${isZh ? '点击复制频道号: pd31262197，加入 FSL 插件频道' : 'Click to copy Channel ID: pd31262197, join FSL Channel'}
+                    <strong style="color: #ffffff;">${isZh ? '加入 FSL 插件频道，频道号: ' : 'Join FSL Channel, ID: '}</strong>
+                    <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', '${isZh ? '频道 ID' : 'Channel ID'}')">
+                        pd31262197
                     </span>
                 </div>
                 
                 <div style="margin-bottom: 12px;">
                     <span style="color: var(--color-accent); font-weight: bold;">2. </span>
-                    <span>${isZh ? '联系作者并出具购买记录' : 'Contact author with purchase record'}</span>
+                    <strong style="color: #ffffff;">${isZh ? '联系作者并出具购买记录截图' : 'Contact author with purchase record screenshot'}</strong>
                     <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
-                        ${isZh ? '进入频道后，私信或在指定板块联系 FarShoreLab 官方。' : 'After joining, contact FarShoreLab via DM or the designated section.'}
+                        ${isZh ? '进入频道后，直接发帖（无板块要求）或私信联系 FarShoreLab 官方。' : 'In the channel, post directly (no section requirements) or DM FarShoreLab.'}
                     </div>
                 </div>
                 
                 <div style="margin-bottom: 4px;">
                     <span style="color: var(--color-accent); font-weight: bold;">3. </span>
-                    <span>${isZh ? '验证通过后获取最新插件' : 'Get the latest plugin after verification'}</span>
+                    <strong style="color: #ffffff;">${isZh ? '验证通过后获取最新插件' : 'Get the latest plugin after verification'}</strong>
                 </div>
             </div>
         `]
