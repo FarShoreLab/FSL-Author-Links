@@ -332,7 +332,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
                         <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                             <span id="fsl_sync_time_display" style="font-size: 11px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
-                                ${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(updateDate)})
+                                ${onlineStatusText} ${isOnline ? `(${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(updateDate)})` : `(${escapeHTML(linkData.updateDate)})`}
                             </span>
                         </div>
                     </div>
@@ -351,21 +351,25 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
     aboutDialog.onCancel = function () { if (clockInterval) clearInterval(clockInterval); };
     aboutDialog.onConfirm = function () { if (clockInterval) clearInterval(clockInterval); };
 
-    clockInterval = setInterval(() => {
-        let el = document.getElementById('fsl_sync_time_display');
-        if (el) {
-            let now = new Date(Date.now() + timeOffset);
-            let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000);
-            let bjDate = new Date(localTime);
-            let yyyy = bjDate.getFullYear();
-            let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
-            let dd = String(bjDate.getDate()).padStart(2, '0');
-            let HH = String(bjDate.getHours()).padStart(2, '0');
-            let min = String(bjDate.getMinutes()).padStart(2, '0');
-            let ss = String(bjDate.getSeconds()).padStart(2, '0');
-            el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${yyyy}-${mm}-${dd} ${HH}:${min}:${ss})`;
-        } else { clearInterval(clockInterval); }
-    }, 1000);
+    if (isOnline) {
+        clockInterval = setInterval(() => {
+            let el = document.getElementById('fsl_sync_time_display');
+            if (el) {
+                let now = new Date(Date.now() + timeOffset);
+                let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000);
+                let bjDate = new Date(localTime);
+                let yyyy = bjDate.getFullYear();
+                let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
+                let dd = String(bjDate.getDate()).padStart(2, '0');
+                let HH = String(bjDate.getHours()).padStart(2, '0');
+                let min = String(bjDate.getMinutes()).padStart(2, '0');
+                let ss = String(bjDate.getSeconds()).padStart(2, '0');
+                let timeStr = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
+                el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${timeStr})`;
+                el.title = `${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${timeStr}`;
+            } else { clearInterval(clockInterval); }
+        }, 1000);
+    }
 
     aboutDialog.show();
 

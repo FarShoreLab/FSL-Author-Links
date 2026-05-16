@@ -334,7 +334,7 @@
                             <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                             <span id="fsl_sync_time_display" style="font-size: 10px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
-                                ${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(updateDate)})
+                                ${onlineStatusText} ${isOnline ? `(${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(updateDate)})` : `(${escapeHTML(linkData.updateDate)})`}
                             </span>
                         </div>
                         </div>
@@ -356,25 +356,28 @@
             if (clockInterval) clearInterval(clockInterval);
         };
 
-        clockInterval = setInterval(() => {
-            let el = document.getElementById('fsl_sync_time_display');
-            if (el) {
-                let now = new Date(Date.now() + timeOffset);
-                let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000);
-                let bjDate = new Date(localTime);
-                let yyyy = bjDate.getFullYear();
-                let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
-                let dd = String(bjDate.getDate()).padStart(2, '0');
-                let HH = String(bjDate.getHours()).padStart(2, '0');
-                let min = String(bjDate.getMinutes()).padStart(2, '0');
-                let ss = String(bjDate.getSeconds()).padStart(2, '0');
-                let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
+        if (isOnline) {
+            clockInterval = setInterval(() => {
+                let el = document.getElementById('fsl_sync_time_display');
+                if (el) {
+                    let now = new Date(Date.now() + timeOffset);
+                    let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000);
+                    let bjDate = new Date(localTime);
+                    let yyyy = bjDate.getFullYear();
+                    let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
+                    let dd = String(bjDate.getDate()).padStart(2, '0');
+                    let HH = String(bjDate.getHours()).padStart(2, '0');
+                    let min = String(bjDate.getMinutes()).padStart(2, '0');
+                    let ss = String(bjDate.getSeconds()).padStart(2, '0');
+                    let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
 
-                el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${timeString})`;
-            } else {
-                clearInterval(clockInterval);
-            }
-        }, 1000);
+                    el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${timeString})`;
+                    el.title = `${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${timeString}`;
+                } else {
+                    clearInterval(clockInterval);
+                }
+            }, 1000);
+        }
 
         aboutDialog.show();
 
