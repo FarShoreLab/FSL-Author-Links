@@ -333,7 +333,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
                         </div>
                         <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
-                            <span id="fsl_sync_time_display" style="font-size: 11px; cursor: help;" title="${isZh ? '云端数据最后更新时间' : 'Cloud data last updated'}: ${escapeHTML(linkData.updateDate)}">
+                            <span id="fsl_sync_time_display" style="font-size: 11px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
                                 ${onlineStatusText} (${updateDate})
                             </span>
                         </div>
