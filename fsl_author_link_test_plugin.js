@@ -116,28 +116,27 @@
         new Dialog({
             id: 'fsl_update_instructions',
             title: isZh ? '获取更新步骤' : 'Update Steps',
-            width: 320,
+            width: 340,
             lines: [`
-                <div style="padding: 10px; font-size: 13px; line-height: 1.6;">
-                    <div style="margin-bottom: 8px; font-weight: bold; color: var(--color-accent);">
-                        ${isZh ? '1. 加入腾讯频道' : '1. Join Tencent Channel'}
-                    </div>
-                    <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                        <div style="font-family: monospace; background: var(--color-back); padding: 4px 8px; border-radius: 4px; flex: 1; text-align: center; border: 1px solid var(--color-border);">pd31262197</div>
-                        <button class="btn" style="min-width: 60px; height: 26px; padding: 0 8px; font-size: 11px; margin: 0;" onclick="window.fslCopyText('pd31262197', '${isZh ? '频道 ID' : 'Channel ID'}')">
-                            ${isZh ? '复制' : 'Copy'}
-                        </button>
+                <div style="padding: 10px; font-size: 13px; line-height: 1.8; color: #ffffff;">
+                    <div style="margin-bottom: 12px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">1. </span>
+                        <span style="cursor: pointer; text-decoration: underline;" onclick="window.fslCopyText('pd31262197', '${isZh ? '频道 ID' : 'Channel ID'}')">
+                            ${isZh ? '点击复制频道号: pd31262197，加入 FSL 插件频道' : 'Click to copy Channel ID: pd31262197, join FSL Channel'}
+                        </span>
                     </div>
                     
-                    <div style="margin-bottom: 8px; font-weight: bold; color: var(--color-accent);">
-                        ${isZh ? '2. 联系作者并出具购买记录' : '2. Contact author with purchase record'}
-                    </div>
-                    <div style="margin-bottom: 12px; font-size: 11px; opacity: 0.8; line-height: 1.4;">
-                        ${isZh ? '进入频道后，私信或在指定板块联系 FarShoreLab 官方。' : 'After joining, contact FarShoreLab via DM or the designated section.'}
+                    <div style="margin-bottom: 12px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">2. </span>
+                        <span>${isZh ? '联系作者并出具购买记录' : 'Contact author with purchase record'}</span>
+                        <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
+                            ${isZh ? '进入频道后，私信或在指定板块联系 FarShoreLab 官方。' : 'After joining, contact FarShoreLab via DM or the designated section.'}
+                        </div>
                     </div>
                     
-                    <div style="font-weight: bold; color: var(--color-accent);">
-                        ${isZh ? '3. 验证通过后获取最新插件' : '3. Get the latest plugin after verification'}
+                    <div style="margin-bottom: 4px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">3. </span>
+                        <span>${isZh ? '验证通过后获取最新插件' : 'Get the latest plugin after verification'}</span>
                     </div>
                 </div>
             `]
