@@ -69,7 +69,7 @@
                 "title": "About Author",
                 "message": "Experimentation is a lifestyle",
                 "license": "Please read and agree to the LICENSE before use",
-                "overseasWarning": "<div style=\"margin-top: 4px;\">This plugin is only authorized for use in Mainland China.<br/>For overseas use, please contact the author by email.</div>",
+                "overseasWarning": "<div style=\"margin-top: 4px; line-height: 1.5;\">Currently, no overseas sales channels are open.<br/>This plugin is only authorized for use in Mainland China.<br/>For overseas use, please contact the author by email.</div>",
                 "links": [
                     { "type": "none", "title": "Patreon (Coming soon)", "color": "#FF424D", "icon": "favorite" },
                     { "type": "url", "title": "Twitter (𝕏)", "url": "https://x.com/FarShoreLab", "color": "#000000", "icon": "𝕏" },
@@ -81,30 +81,12 @@
                     { "type": "copy", "title": "Tencent Channel (Click to copy ID)", "text": "pd31262197", "color": "#0099FF", "icon": "hub", "copyType": "Tencent Channel" }
                 ],
                 "updateInstructionsHtml": `
-                    <div style="padding: 10px; font-size: 13px; line-height: 1.8; color: #ffffff;">
-                        <div style="margin-bottom: 12px;">
-                            <span style="color: var(--color-accent); font-weight: bold;">1. </span>
-                            <strong style="color: #ffffff;">Join FSL Tencent Channel</strong>
-                            <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;">
-                                Click to copy ID: 
-                                <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', 'Tencent Channel ID')">pd31262197</span>
-                            </div>
-                        </div>
-                        
-                        <div style="margin-bottom: 12px;">
-                            <span style="color: var(--color-accent); font-weight: bold;">2. </span>
-                            <strong style="color: #ffffff;">Contact author and send purchase screenshot</strong>
-                            <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
-                                In the channel, post directly (any section) or DM FarShoreLab.
-                            </div>
-                        </div>
-                        
-                        <div style="margin-bottom: 4px;">
-                            <span style="color: var(--color-accent); font-weight: bold;">3. </span>
-                            <strong style="color: #ffffff;">Wait for verification and get plugin</strong>
-                            <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
-                                After approval, the author will send the latest plugin version to you.
-                            </div>
+                    <div style="padding: 20px 10px; font-size: 13px; line-height: 1.8; color: #ffffff; text-align: center;">
+                        <i class="material-icons" style="font-size: 48px; color: #E57373; margin-bottom: 15px;">language</i>
+                        <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">Currently, no overseas sales channels are open.</div>
+                        <div style="opacity: 0.7; font-size: 11px;">
+                            This plugin is only authorized for use in Mainland China.<br/>
+                            For overseas use, please contact the author by email.
                         </div>
                     </div>`
             }
