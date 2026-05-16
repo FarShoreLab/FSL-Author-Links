@@ -128,17 +128,25 @@
     // --- FSL Version Manager Utils End ---
 
     window.fslCopyText = function(text, type) {
-        if (typeof require !== 'undefined') {
+        let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(() => {
+                Blockbench.showQuickMessage(isZh ? (`✅ ${type} 已复制到剪贴板: ${text}`) : (`✅ ${type} copied to clipboard: ${text}`), 3000);
+            }).catch(() => {
+                Blockbench.showQuickMessage(isZh ? (`❌ 复制失败，请手动复制: ${text}`) : (`❌ Failed to copy, please copy manually: ${text}`), 3000);
+            });
+        } else if (typeof require !== 'undefined') {
             require('electron').clipboard.writeText(text);
+            Blockbench.showQuickMessage(isZh ? (`✅ ${type} 已复制到剪贴板: ${text}`) : (`✅ ${type} copied to clipboard: ${text}`), 3000);
         } else {
-            let tempInput = document.createElement("input");
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand("copy");
-            document.body.removeChild(tempInput);
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            Blockbench.showQuickMessage(isZh ? (`✅ ${type} 已复制到剪贴板: ${text}`) : (`✅ ${type} copied to clipboard: ${text}`), 3000);
         }
-        Blockbench.showQuickMessage(`${type} 已复制到剪贴板`, 3000);
     };
 
     async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFilePath = null) {
@@ -244,8 +252,9 @@
                 versionDisplayHtml = `
                     <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
                     <span style="opacity: 0.3;">|</span>
-                    <span style="color: #E57373; font-size: 11px;">${isZh ? '最新版本' : 'Latest'}: ${escapeHTML(versionData.latestVersion)}</span>
-                    <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4285F4; font-size: 11px; text-decoration: underline; margin-left: 4px; cursor: pointer;">${isZh ? '获取最新版本' : 'Get Update'}</a>
+                    <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4CAF50; font-size: 11px; text-decoration: underline; cursor: pointer;">
+                        ${isZh ? '点击获取最新版本' : 'Click to get latest'}: v${escapeHTML(versionData.latestVersion)}
+                    </a>
                 `;
             }
         } else {
@@ -265,10 +274,8 @@
                     let safeUrl = escapeHTML(link.url);
                     onclickStr = `onclick="Blockbench.openLink('${safeUrl}')"`;
                 } else if (link.type === 'copy') {
-                    let safeText = escapeHTML(link.text);
-                    let safeCopyType = escapeHTML(link.copyType || 'Text');
-                    safeText = safeText.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                    safeCopyType = safeCopyType.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                    let safeText = escapeHTML(link.text).replace(/'/g, "\\'");
+                    let safeCopyType = escapeHTML(link.copyType || 'Text').replace(/'/g, "\\'");
                     onclickStr = `onclick="window.fslCopyText('${safeText}', '${safeCopyType}')"`;
                 }
 
