@@ -87,6 +87,7 @@ function compareSemVer(v1, v2) {
     return 0;
 }
 
+/*
 function calculateFileHash(filePath) {
     if (typeof require === 'undefined') return null;
     try {
@@ -110,6 +111,7 @@ function generateGitHubIssueUrl(pluginId, currentVersion, localHash) {
     );
     return `https://github.com/FarShoreLab/FSL-Author-Links/issues/new?title=${title}&body=${body}`;
 }
+*/
 
 window.fslShowUpdateInstructions = function() {
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
@@ -335,6 +337,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
     
     aboutDialog.show();
     
+    /*
     // Trigger Hash Warning independently after dialog opens, if tampered
     if (versionData && versionData.hashes && versionData.hashes[pluginVersion] && pluginFilePath && typeof require !== 'undefined') {
         const expectedHash = versionData.hashes[pluginVersion];
@@ -371,6 +374,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
             warningDialog.show();
         }
     }
+    */
 }
 
 // --- FSL Author Manager Export ---

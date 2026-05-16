@@ -85,6 +85,7 @@
         return 0;
     }
 
+    /*
     function calculateFileHash(filePath) {
         if (typeof require === 'undefined') return null;
         try {
@@ -108,6 +109,7 @@
         );
         return `https://github.com/FarShoreLab/FSL-Author-Links/issues/new?title=${title}&body=${body}`;
     }
+    */
 
     window.fslShowUpdateInstructions = function() {
         let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
@@ -341,6 +343,7 @@
         
         aboutDialog.show();
         
+        /*
         // Trigger Hash Warning independently after dialog opens, if tampered
         if (versionData && versionData.hashes && versionData.hashes[pluginVersion] && pluginFilePath && typeof require !== 'undefined') {
             const expectedHash = versionData.hashes[pluginVersion];
@@ -377,6 +380,7 @@
                 warningDialog.show();
             }
         }
+        */
     }
     // --- Embedded Manager Code End ---
 
