@@ -379,6 +379,21 @@
             }, 1000);
         }
 
+        aboutDialog.onOpen = function() {
+            setTimeout(() => {
+                let $dialog = $(aboutDialog.object);
+                let $handle = $dialog.find('.dialog_handle');
+                if ($handle.length && !$handle.find('.fsl-header-btn').length) {
+                    let $btn = $(`<div class="dialog_close_button fsl-header-btn" title="${isZh ? '刷新同步数据' : 'Refresh sync data'}" style="right: 33px; z-index: 3; border-radius: 6px; position: absolute;"><i class="material-icons">refresh</i></div>`);
+                    $btn.click(function () {
+                        aboutDialog.hide();
+                        showFslAuthorDialog(pluginId, pluginVersion, pluginFilePath);
+                    });
+                    $handle.append($btn);
+                }
+            }, 10);
+        };
+
         aboutDialog.show();
 
         /*
