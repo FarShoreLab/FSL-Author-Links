@@ -73,6 +73,60 @@ function isUrlSafe(url) {
     return ALLOWED_DOMAINS.some(domain => url.startsWith(domain));
 }
 
+// --- FSL Version Manager Utils ---
+function compareSemVer(v1, v2) {
+    if (!v1 || !v2) return 0;
+    let parts1 = v1.split('-')[0].split('.').map(Number);
+    let parts2 = v2.split('-')[0].split('.').map(Number);
+    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+        let p1 = parts1[i] || 0;
+        let p2 = parts2[i] || 0;
+        if (p1 > p2) return 1;
+        if (p1 < p2) return -1;
+    }
+    return 0;
+}
+
+function calculateFileHash(filePath) {
+    if (typeof require === 'undefined') return null;
+    try {
+        const fs = require('fs');
+        const crypto = require('crypto');
+        if (!fs.existsSync(filePath)) return null;
+        let content = fs.readFileSync(filePath, 'utf8');
+        content = content.replace(/\r\n/g, '\n').trim();
+        return crypto.createHash('sha256').update(content, 'utf8').digest('hex');
+    } catch (e) { return null; }
+}
+
+function generateGitHubIssueUrl(pluginId, currentVersion, localHash) {
+    const title = encodeURIComponent(`[Tamper Alert] Hash Mismatch in ${pluginId} v${currentVersion}`);
+    const body = encodeURIComponent(
+        `**Plugin ID:** ${pluginId}\n` +
+        `**Version:** ${currentVersion}\n` +
+        `**Local Hash:** \`${localHash || 'Unknown'}\`\n` +
+        `**Environment:** ${typeof Blockbench !== 'undefined' ? Blockbench.version : 'Unknown'}\n\n` +
+        `*Please describe where you downloaded this plugin from:* \n\n`
+    );
+    return `https://github.com/FarShoreLab/FSL-Author-Links/issues/new?title=${title}&body=${body}`;
+}
+
+window.fslShowUpdateInstructions = function() {
+    let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
+    new Dialog({
+        id: 'fsl_update_instructions',
+        title: isZh ? '获取更新' : 'Get Update',
+        width: 300,
+        lines: [`
+            <div style="text-align: center; padding: 10px;">
+                <div style="margin-bottom: 15px;">${isZh ? '请加入我们的腾讯频道获取最新的插件更新：' : 'Please join our Tencent Channel to get the latest updates:'}</div>
+                <div style="font-size: 18px; font-weight: bold; user-select: all; background: var(--color-back); padding: 8px; border-radius: 4px;">pd31262197</div>
+            </div>
+        `]
+    }).show();
+};
+// --- FSL Version Manager Utils End ---
+
 /**
  * Global helper function attached to window for handling clipboard copy within the dialog
  */
@@ -86,12 +140,11 @@ window.fslCopyText = function (text, type) {
 };
 
 /**
- * Fetch online links, fallback to local if failed or compromised.
- * Displays the About Author dialog.
- * @param {string} pluginVersion - The version of the calling plugin (e.g., '4.2.3')
+ * Initializes and displays the FarShoreLab global unified "About Author" dialog with version checking.
  */
-async function showFslAuthorDialog(pluginVersion = 'Unknown') {
+async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFilePath = null) {
     let linkData = LOCAL_AUTHOR_LINKS;
+    let versionData = null;
     let isOnline = false;
     let timeOffset = 0; // Difference between network time and local time
 
@@ -100,68 +153,54 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
         isOnline = false;
     } else {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s strict timeout
-
+        const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s forced timeout
+        
+        const fetchLinksUrl = `https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/links.json?t=${Date.now()}`;
+        const fetchVersionUrl = pluginId ? `https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/projects/${pluginId}/version.json?t=${Date.now()}` : null;
+        
         try {
-            // Append timestamp to forcefully bypass browser cache
-            const fetchUrl = FSL_AUTHOR_LINKS_URL + "?t=" + Date.now();
-            const response = await fetch(fetchUrl, { 
-                cache: "no-store", 
-                signal: controller.signal 
-            });
+            const [linksRes, versionRes] = await Promise.all([
+                fetch(fetchLinksUrl, { cache: "no-store", signal: controller.signal }),
+                fetchVersionUrl ? fetch(fetchVersionUrl, { cache: "no-store", signal: controller.signal }).catch(() => null) : Promise.resolve(null)
+            ]);
+            
             clearTimeout(timeoutId);
             
-            if (response.ok) {
-                let serverDateStr = response.headers.get('date');
+            if (linksRes && linksRes.ok) {
+                let serverDateStr = linksRes.headers.get('date');
                 if (serverDateStr) {
                     timeOffset = new Date(serverDateStr).getTime() - Date.now();
                 }
                 
-                let parsedData = await response.json();
+                let parsedData = await linksRes.json();
                 
                 // Security: Schema validation to prevent Malformed JSON attacks
-                if (parsedData && parsedData.locales && parsedData.updateDate) {
-                    // Security: Whitelist validation (Anti-Phishing / MITM)
+                if (parsedData && parsedData.locales && parsedData.locales.zh && parsedData.locales.en) {
                     let isCompromised = false;
                     for (let locale in parsedData.locales) {
                         let links = parsedData.locales[locale].links;
                         if (Array.isArray(links)) {
-                            if (links.length > 20) { // Limit array size
-                                isCompromised = true; break;
-                            }
+                            if (links.length > 20) { isCompromised = true; break; }
                             for (let link of links) {
-                                if (link.type === 'url' && !isUrlSafe(link.url)) {
-                                    console.warn("FSL Security Warning: Untrusted URL detected in payload -", link.url);
-                                    isCompromised = true;
-                                }
+                                if (link.type === 'url' && !isUrlSafe(link.url)) { isCompromised = true; break; }
                             }
                         }
                     }
-
                     if (!isCompromised) {
                         linkData = parsedData;
                         isOnline = true;
-                    } else {
-                        console.error("FSL Security: Data payload rejected due to validation failure. Falling back to secure local data.");
                     }
-                } else {
-                    console.error("FSL Security: Invalid data schema. Falling back to secure local data.");
                 }
             }
-        } catch (e) {
-            clearTimeout(timeoutId);
-            console.warn("FSL Author Links: Network request failed or timed out.");
-        }
+            
+            if (versionRes && versionRes.ok) {
+                versionData = await versionRes.json();
+            }
+        } catch (e) { clearTimeout(timeoutId); }
     }
 
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
     let localeKey = isZh ? 'zh' : 'en';
-    
-    if (!linkData || !linkData.locales || !linkData.locales[localeKey]) {
-        console.error("FSL Security: Invalid locale structure. Aborting dialog.");
-        return;
-    }
-
     let t = linkData.locales[localeKey];
     let updateDate = escapeHTML(linkData.updateDate || 'Unknown');
 
@@ -183,23 +222,50 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
     let onlineStatusColor = isOnline ? '#4CAF50' : '#E57373';
     let onlineStatusText = isOnline ? (isZh ? '作者链接已同步' : 'Author Links Synced') : (isZh ? '离线作者链接' : 'Offline Author Links');
 
+    // Version Display Logic
+    let versionDisplayHtml = '';
+    if (!isOnline) {
+        versionDisplayHtml = `
+            <span>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+            <span style="opacity: 0.3;">|</span>
+            <span style="opacity: 0.7; font-size: 11px;">${isZh ? '联网检查最新版本' : 'Connect to check latest'}</span>
+        `;
+    } else if (versionData && versionData.latestVersion) {
+        let isLatest = compareSemVer(pluginVersion, versionData.latestVersion) >= 0;
+        if (isLatest) {
+            versionDisplayHtml = `
+                <span>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+                <span style="opacity: 0.3;">|</span>
+                <span style="color: #4CAF50; font-size: 11px;">${isZh ? '已是最新版本' : 'Latest Version'}</span>
+            `;
+        } else {
+            versionDisplayHtml = `
+                <span>${isZh ? '当前版本' : 'Current Version'}: <span style="text-decoration: line-through; opacity: 0.7;">${escapeHTML(pluginVersion)}</span></span>
+                <span style="opacity: 0.3;">|</span>
+                <span style="color: #E57373; font-size: 11px;">${isZh ? '最新版本' : 'Latest'}: ${escapeHTML(versionData.latestVersion)}</span>
+                <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4285F4; font-size: 11px; text-decoration: underline; margin-left: 4px; cursor: pointer;">${isZh ? '获取最新版本' : 'Get Update'}</a>
+            `;
+        }
+    } else {
+        versionDisplayHtml = `
+            <span>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+        `;
+    }
+
     // Generate Buttons HTML safely
     let buttonsHtml = '';
     if (Array.isArray(t.links)) {
         t.links.forEach(link => {
             let onclickStr = '';
-            // Security: Sanitize all outputs
             let safeTitle = escapeHTML(link.title);
             let safeColor = escapeHTML(link.color || '#444');
             
             if (link.type === 'url') {
-                // We already validated url via isUrlSafe, but escape anyway
                 let safeUrl = escapeHTML(link.url);
                 onclickStr = `onclick="Blockbench.openLink('${safeUrl}')"`;
             } else if (link.type === 'copy') {
                 let safeText = escapeHTML(link.text);
                 let safeCopyType = escapeHTML(link.copyType || 'Text');
-                // Escape backslashes and quotes for safe JS injection
                 safeText = safeText.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 safeCopyType = safeCopyType.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                 onclickStr = `onclick="window.fslCopyText('${safeText}', '${safeCopyType}')"`;
@@ -226,8 +292,10 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
                 <div style="color: var(--color-subtle_text); font-size: 11px; line-height: 1.6; opacity: 0.85;">
                     <div>${escapeHTML(t.message)}</div>
                     <div style="margin: 4px 0;">
-                        <div>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</div>
-                        <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 2px; color: ${onlineStatusColor}; opacity: 0.9;">
+                        <div style="display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 12px;">
+                            ${versionDisplayHtml}
+                        </div>
+                        <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                             <span id="fsl_sync_time_display" style="font-size: 10px;">${onlineStatusText} (${updateDate})</span>
                         </div>
@@ -245,12 +313,8 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
     // Live clock ticker
     let clockInterval = null;
     if (isOnline) {
-        aboutDialog.onCancel = function() {
-            if (clockInterval) clearInterval(clockInterval);
-        };
-        aboutDialog.onConfirm = function() {
-            if (clockInterval) clearInterval(clockInterval);
-        };
+        aboutDialog.onCancel = function() { if (clockInterval) clearInterval(clockInterval); };
+        aboutDialog.onConfirm = function() { if (clockInterval) clearInterval(clockInterval); };
         
         clockInterval = setInterval(() => {
             let el = document.getElementById('fsl_sync_time_display');
@@ -264,20 +328,50 @@ async function showFslAuthorDialog(pluginVersion = 'Unknown') {
                 let HH = String(bjDate.getHours()).padStart(2, '0');
                 let min = String(bjDate.getMinutes()).padStart(2, '0');
                 let ss = String(bjDate.getSeconds()).padStart(2, '0');
-                let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
-                
-                el.innerText = `${onlineStatusText} (${timeString})`;
-            } else {
-                clearInterval(clockInterval);
-            }
+                el.innerText = `${onlineStatusText} (${yyyy}-${mm}-${dd} ${HH}:${min}:${ss})`;
+            } else { clearInterval(clockInterval); }
         }, 1000);
     }
     
     aboutDialog.show();
+    
+    // Trigger Hash Warning independently after dialog opens, if tampered
+    if (versionData && versionData.hashes && versionData.hashes[pluginVersion] && pluginFilePath && typeof require !== 'undefined') {
+        const expectedHash = versionData.hashes[pluginVersion];
+        const localHash = calculateFileHash(pluginFilePath);
+        if (localHash && localHash !== expectedHash) {
+            let warningDialog = new Dialog({
+                id: 'fsl_tamper_warning_dialog',
+                title: isZh ? '安全警告: 文件损坏或被篡改' : 'Security Warning: File Tampered',
+                width: 400,
+                buttons: [isZh ? '向官方提交 Issue 报警' : 'Report Issue on GitHub', isZh ? '继续使用 (风险自负)' : 'Continue (At Your Own Risk)'],
+                lines: [`
+                    <div style="text-align: center; padding: 10px 0;">
+                        <i class="material-icons" style="font-size: 40px; color: #E57373;">warning</i>
+                        <h3 style="margin: 10px 0; color: #E57373;">${isZh ? '插件完整性校验失败' : 'Plugin Integrity Verification Failed'}</h3>
+                        <div style="font-size: 12px; opacity: 0.8; text-align: left; background: var(--color-back); padding: 10px; border-radius: 4px; border-left: 3px solid #E57373;">
+                            ${isZh ? '系统检测到您运行的插件与 FarShoreLab 官方发布的哈希值不匹配。这可能意味着：' : 'The system detected that the plugin you are running does not match the official hash. This could mean:'}<br/>
+                            <ul style="padding-left: 20px; margin-top: 5px;">
+                                <li>${isZh ? '插件在下载过程中发生数据损坏。' : 'The plugin was corrupted during download.'}</li>
+                                <li>${isZh ? '您正在使用被第三方非官方修改过的高风险版本，代码已被注入。' : 'You are using an unofficial modified version with high security risks.'}</li>
+                            </ul>
+                        </div>
+                    </div>
+                `],
+                onConfirm() {
+                    const issueUrl = generateGitHubIssueUrl(pluginId, pluginVersion, localHash);
+                    if (typeof require !== 'undefined') {
+                        require('electron').shell.openExternal(issueUrl);
+                    } else {
+                        window.open(issueUrl, '_blank');
+                    }
+                    warningDialog.hide();
+                }
+            });
+            warningDialog.show();
+        }
+    }
 }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { showFslAuthorDialog };
-} else if (typeof window !== 'undefined') {
-    window.showFslAuthorDialog = showFslAuthorDialog;
-}
+// --- FSL Author Manager Export ---
+window.showFslAuthorDialog = showFslAuthorDialog;

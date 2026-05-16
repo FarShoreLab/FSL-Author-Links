@@ -1,7 +1,7 @@
-(function() {
+(function () {
     let testAction;
 
-    Plugin.register('fsl_test_plugin', {
+    Plugin.register('fsl_version_test_plugin', {
         title: 'FSL Version Test',
         author: 'FarShoreLab',
         description: 'Tests the FSL Version Manager functionality.',
@@ -18,7 +18,7 @@
                     console.error("FSL Version Manager not found! Make sure fsl_version_manager.js is loaded first.");
                 }
             }, 1000);
-            
+
             testAction = new Action('fsl_test_trigger_version', {
                 name: 'Trigger Version Check',
                 description: 'Manually trigger FSL Version Check',
