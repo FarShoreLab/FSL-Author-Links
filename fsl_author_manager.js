@@ -123,23 +123,27 @@ window.fslShowUpdateInstructions = function() {
             <div style="padding: 10px; font-size: 13px; line-height: 1.8; color: #ffffff;">
                 <div style="margin-bottom: 12px;">
                     <span style="color: var(--color-accent); font-weight: bold;">1. </span>
-                    <strong style="color: #ffffff;">${isZh ? '加入 FSL 腾讯频道，频道号: ' : 'Join FSL Tencent Channel, ID: '}</strong>
-                    <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', '${isZh ? '腾讯频道 ID' : 'Tencent Channel ID'}')">
-                        pd31262197
-                    </span>
+                    <strong style="color: #ffffff;">${isZh ? '加入 FSL 腾讯频道' : 'Join FSL Tencent Channel'}</strong>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;">
+                        ${isZh ? '点击复制频道号: ' : 'Click to copy ID: '}
+                        <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', '${isZh ? '腾讯频道 ID' : 'Tencent Channel ID'}')">pd31262197</span>
+                    </div>
                 </div>
                 
                 <div style="margin-bottom: 12px;">
                     <span style="color: var(--color-accent); font-weight: bold;">2. </span>
-                    <strong style="color: #ffffff;">${isZh ? '联系作者并出具购买记录截图' : 'Contact author with purchase record screenshot'}</strong>
+                    <strong style="color: #ffffff;">${isZh ? '联系作者并发送购买记录截屏' : 'Contact author and send purchase screenshot'}</strong>
                     <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
-                        ${isZh ? '进入频道后，直接发帖（无板块要求）或私信联系 FarShoreLab 官方。' : 'In the channel, post directly (no section requirements) or DM FarShoreLab.'}
+                        ${isZh ? '进入频道后，可直接发帖（无板块要求）或私信联系 FarShoreLab 官方。' : 'In the channel, post directly (any section) or DM FarShoreLab.'}
                     </div>
                 </div>
                 
                 <div style="margin-bottom: 4px;">
                     <span style="color: var(--color-accent); font-weight: bold;">3. </span>
-                    <strong style="color: #ffffff;">${isZh ? '验证通过后获取最新插件' : 'Get the latest plugin after verification'}</strong>
+                    <strong style="color: #ffffff;">${isZh ? '等待审核并获取插件' : 'Wait for verification and get plugin'}</strong>
+                    <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
+                        ${isZh ? '审核通过后，作者将第一时间发送最新版本插件给您。' : 'After approval, the author will send the latest plugin version to you.'}
+                    </div>
                 </div>
             </div>
         `]
