@@ -475,6 +475,7 @@
 
     let aboutAction;
     let paralysisAction;
+    let downgradeAction;
 
     Plugin.register('fsl_author_link_test_plugin', {
         title: 'FSL Author Links Test',
@@ -484,7 +485,13 @@
         version: '1.2.0-test',
         variant: 'both',
         onload() {
+            // ============================================================================
+            // ⚠️ ATTENTION: FSL INTERNAL TESTING TOOLS
+            // DO NOT INCLUDE THE FOLLOWING VARIABLES AND ACTIONS IN PRODUCTION PLUGINS!
+            // THESE ARE STRICTLY FOR TESTING MANAGER BEHAVIORS IN THE DEV ENVIRONMENT.
+            // ============================================================================
             window.fslParalysisMode = false;
+            window.fslDowngradeMode = false;
 
             paralysisAction = new Action('fsl_paralysis_toggle', {
                 name: '本地瘫痪测试',
@@ -498,12 +505,27 @@
             });
             MenuBar.addAction(paralysisAction, 'tools');
 
+            downgradeAction = new Action('fsl_downgrade_toggle', {
+                name: '模拟降级测试',
+                description: 'Toggle Version Downgrade Simulation',
+                icon: 'arrow_downward',
+                category: 'tools',
+                click: () => {
+                    window.fslDowngradeMode = !window.fslDowngradeMode;
+                    Blockbench.showQuickMessage(window.fslDowngradeMode ? '⬇️ 已开启模拟降级 (Version forced to 0.0.1)' : '✅ 已恢复真实版本');
+                }
+            });
+            MenuBar.addAction(downgradeAction, 'tools');
+            // ============================================================================
+
             aboutAction = new Action('fsl_test_about', {
                 name: 'About FarShoreLab',
                 description: 'Show Author Links',
                 icon: 'info',
                 click: () => {
-                    showFslAuthorDialog(this.id, this.version, this.path);
+                    // In production, just use: showFslAuthorDialog(this.id, this.version, this.path);
+                    let testVersion = window.fslDowngradeMode ? '0.0.1' : this.version;
+                    showFslAuthorDialog(this.id, testVersion, this.path);
                 }
             });
             MenuBar.addAction(aboutAction, 'help');
@@ -511,6 +533,7 @@
         onunload() {
             aboutAction.delete();
             paralysisAction.delete();
+            downgradeAction.delete();
         }
     });
 })();
