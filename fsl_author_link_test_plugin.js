@@ -81,10 +81,8 @@
                     { "type": "copy", "title": "Tencent Channel (Click to copy ID)", "text": "pd31262197", "color": "#0099FF", "icon": "hub", "copyType": "Tencent Channel" }
                 ],
                 "updateInstructionsHtml": `
-                    <div style="padding: 20px 10px; font-size: 13px; line-height: 1.8; color: #ffffff; text-align: center;">
-                        <div style="display: flex; justify-content: center; align-items: center; height: 60px; margin-bottom: 10px;">
-                            <i class="material-icons" style="font-size: 48px; color: #E57373; line-height: 1; display: block; overflow: visible;">language</i>
-                        </div>
+                    <div style="padding: 20px 0; font-size: 13px; line-height: 1.8; color: #ffffff; text-align: center;">
+                        <i class="material-icons" style="font-size: 48px; color: #E57373; display: inline-block; width: 48px; height: 48px; line-height: 48px; margin-bottom: 15px;">language</i>
                         <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">Currently, no overseas sales channels are open.</div>
                         <div style="opacity: 0.7; font-size: 11px;">
                             This plugin is only authorized for use in Mainland China.<br/>
