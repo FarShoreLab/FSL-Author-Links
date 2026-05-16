@@ -244,18 +244,16 @@
 
         let updateDate = escapeHTML(linkData.updateDate || 'Unknown');
 
-        if (isOnline) {
-            let now = new Date(Date.now() + timeOffset);
-            let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000); // UTC+8
-            let bjDate = new Date(localTime);
-            let yyyy = bjDate.getFullYear();
-            let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
-            let dd = String(bjDate.getDate()).padStart(2, '0');
-            let HH = String(bjDate.getHours()).padStart(2, '0');
-            let min = String(bjDate.getMinutes()).padStart(2, '0');
-            let ss = String(bjDate.getSeconds()).padStart(2, '0');
-            updateDate = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
-        }
+        let now = new Date(Date.now() + timeOffset);
+        let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000); // UTC+8
+        let bjDate = new Date(localTime);
+        let yyyy = bjDate.getFullYear();
+        let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
+        let dd = String(bjDate.getDate()).padStart(2, '0');
+        let HH = String(bjDate.getHours()).padStart(2, '0');
+        let min = String(bjDate.getMinutes()).padStart(2, '0');
+        let ss = String(bjDate.getSeconds()).padStart(2, '0');
+        updateDate = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
 
         // Status Indicator Logic (Clean UI)
         let onlineStatusIcon = isOnline ? 'cloud_done' : 'cloud_off';
@@ -351,34 +349,32 @@
         });
 
         let clockInterval = null;
-        if (isOnline) {
-            aboutDialog.onCancel = function () {
-                if (clockInterval) clearInterval(clockInterval);
-            };
-            aboutDialog.onConfirm = function () {
-                if (clockInterval) clearInterval(clockInterval);
-            };
+        aboutDialog.onCancel = function () {
+            if (clockInterval) clearInterval(clockInterval);
+        };
+        aboutDialog.onConfirm = function () {
+            if (clockInterval) clearInterval(clockInterval);
+        };
 
-            clockInterval = setInterval(() => {
-                let el = document.getElementById('fsl_sync_time_display');
-                if (el) {
-                    let now = new Date(Date.now() + timeOffset);
-                    let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000);
-                    let bjDate = new Date(localTime);
-                    let yyyy = bjDate.getFullYear();
-                    let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
-                    let dd = String(bjDate.getDate()).padStart(2, '0');
-                    let HH = String(bjDate.getHours()).padStart(2, '0');
-                    let min = String(bjDate.getMinutes()).padStart(2, '0');
-                    let ss = String(bjDate.getSeconds()).padStart(2, '0');
-                    let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
+        clockInterval = setInterval(() => {
+            let el = document.getElementById('fsl_sync_time_display');
+            if (el) {
+                let now = new Date(Date.now() + timeOffset);
+                let localTime = now.getTime() + (now.getTimezoneOffset() * 60000) + (8 * 60 * 60000);
+                let bjDate = new Date(localTime);
+                let yyyy = bjDate.getFullYear();
+                let mm = String(bjDate.getMonth() + 1).padStart(2, '0');
+                let dd = String(bjDate.getDate()).padStart(2, '0');
+                let HH = String(bjDate.getHours()).padStart(2, '0');
+                let min = String(bjDate.getMinutes()).padStart(2, '0');
+                let ss = String(bjDate.getSeconds()).padStart(2, '0');
+                let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
 
-                    el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${timeString})`;
-                } else {
-                    clearInterval(clockInterval);
-                }
-            }, 1000);
-        }
+                el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${timeString})`;
+            } else {
+                clearInterval(clockInterval);
+            }
+        }, 1000);
 
         aboutDialog.show();
 
