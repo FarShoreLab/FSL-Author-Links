@@ -250,12 +250,12 @@
                 `;
             } else {
                 versionDisplayHtml = `
-                    <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
-                    <span style="opacity: 0.3;">|</span>
-                    <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4CAF50; font-size: 11px; text-decoration: underline; cursor: pointer;">
-                        ${isZh ? '点击获取最新版本' : 'Click to get latest'}: v${escapeHTML(versionData.latestVersion)}
-                    </a>
-                `;
+                <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+                <span style="opacity: 0.3;">|</span>
+                <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4CAF50; font-size: 11px; text-decoration: none; cursor: pointer;">
+                    ${isZh ? '点击获取最新版本' : 'Click to get latest'}: v${escapeHTML(versionData.latestVersion)}
+                </a>
+            `;
             }
         } else {
             versionDisplayHtml = `
@@ -304,9 +304,11 @@
                                 ${versionDisplayHtml}
                             </div>
                             <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
-                                <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
-                                <span id="fsl_sync_time_display" style="font-size: 10px;">${onlineStatusText} (${updateDate})</span>
-                            </div>
+                            <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
+                            <span id="fsl_sync_time_display" style="font-size: 10px; cursor: help;" title="${isZh ? '云端数据最后更新时间' : 'Cloud data last updated'}: ${escapeHTML(linkData.updateDate)}">
+                                ${onlineStatusText} (${updateDate})
+                            </span>
+                        </div>
                         </div>
                         <div>${escapeHTML(t.license)}</div>
                         ${t.overseasWarning ? t.overseasWarning : ''}
