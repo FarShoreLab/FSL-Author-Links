@@ -336,7 +336,7 @@
                             <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                             <span id="fsl_sync_time_display" style="font-size: 10px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
-                                ${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(linkData.updateDate)})
+                                ${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(updateDate)})
                             </span>
                         </div>
                         </div>
@@ -373,7 +373,7 @@
                     let ss = String(bjDate.getSeconds()).padStart(2, '0');
                     let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
 
-                    el.innerText = `${onlineStatusText} (${timeString})`;
+                    el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${timeString})`;
                 } else {
                     clearInterval(clockInterval);
                 }

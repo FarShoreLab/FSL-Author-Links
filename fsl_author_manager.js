@@ -334,7 +334,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
                         <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                             <span id="fsl_sync_time_display" style="font-size: 11px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
-                                ${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(linkData.updateDate)})
+                                ${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(updateDate)})
                             </span>
                         </div>
                     </div>
@@ -366,7 +366,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
                 let HH = String(bjDate.getHours()).padStart(2, '0');
                 let min = String(bjDate.getMinutes()).padStart(2, '0');
                 let ss = String(bjDate.getSeconds()).padStart(2, '0');
-                el.innerText = `${onlineStatusText} (${yyyy}-${mm}-${dd} ${HH}:${min}:${ss})`;
+                el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${yyyy}-${mm}-${dd} ${HH}:${min}:${ss})`;
             } else { clearInterval(clockInterval); }
         }, 1000);
     }
