@@ -9,7 +9,7 @@
 
     // --- Embedded Manager Code Begin ---
     const FSL_AUTHOR_LINKS_URL = 'https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/links.json';
-    
+
     const ALLOWED_DOMAINS = [
         "https://space.bilibili.com/",
         "https://www.xiaohongshu.com/",
@@ -60,10 +60,10 @@
     function escapeHTML(str) {
         if (typeof str !== 'string') return '';
         return str.replace(/&/g, '&amp;')
-                  .replace(/</g, '&lt;')
-                  .replace(/>/g, '&gt;')
-                  .replace(/"/g, '&quot;')
-                  .replace(/'/g, '&#39;');
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     function isUrlSafe(url) {
@@ -106,7 +106,12 @@
             `**Local Hash:** \`${localHash || 'Unknown'}\`\n` +
             `**Environment:** ${typeof Blockbench !== 'undefined' ? Blockbench.version : 'Unknown'}\n\n` +
             `*Please describe where you downloaded this plugin from:* \n\n`
-        window.fslShowUpdateInstructions = function() {
+        );
+        return `https://github.com/FarShoreLab/FSL-Author-Links/issues/new?title=${title}&body=${body}`;
+    }
+    */
+
+    window.fslShowUpdateInstructions = function () {
         let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
         new Dialog({
             id: 'fsl_update_instructions',
@@ -141,16 +146,10 @@
                 </div>
             `]
         }).show();
-    };bold;">3. </span>
-                        <strong style="color: #ffffff;">${isZh ? '验证通过后获取最新插件' : 'Get the latest plugin after verification'}</strong>
-                    </div>
-                </div>
-            `]
-        }).show();
     };
     // --- FSL Version Manager Utils End ---
 
-    window.fslCopyText = function(text, type) {
+    window.fslCopyText = function (text, type) {
         let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
         if (typeof navigator !== 'undefined' && navigator.clipboard) {
             navigator.clipboard.writeText(text).then(() => {
@@ -184,26 +183,26 @@
         } else {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s forced timeout
-            
+
             const fetchLinksUrl = `https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/links.json?t=${Date.now()}`;
             const fetchVersionUrl = pluginId ? `https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/projects/${pluginId}/version.json?t=${Date.now()}` : null;
-            
+
             try {
                 const [linksRes, versionRes] = await Promise.all([
                     fetch(fetchLinksUrl, { cache: "no-store", signal: controller.signal }),
                     fetchVersionUrl ? fetch(fetchVersionUrl, { cache: "no-store", signal: controller.signal }).catch(() => null) : Promise.resolve(null)
                 ]);
-                
+
                 clearTimeout(timeoutId);
-                
+
                 if (linksRes && linksRes.ok) {
                     let serverDateStr = linksRes.headers.get('date');
                     if (serverDateStr) {
                         timeOffset = new Date(serverDateStr).getTime() - Date.now();
                     }
-                    
+
                     let parsedData = await linksRes.json();
-                    
+
                     // Security: Schema validation to prevent Malformed JSON attacks
                     if (parsedData && parsedData.locales && parsedData.locales.zh && parsedData.locales.en) {
                         let isCompromised = false;
@@ -222,7 +221,7 @@
                         }
                     }
                 }
-                
+
                 if (versionRes && versionRes.ok) {
                     versionData = await versionRes.json();
                 }
@@ -231,7 +230,7 @@
 
         let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
         let localeKey = isZh ? 'zh' : 'en';
-        
+
         if (!linkData || !linkData.locales || !linkData.locales[localeKey]) return;
 
         let t = linkData.locales[localeKey];
@@ -292,7 +291,7 @@
                 let onclickStr = '';
                 let safeTitle = escapeHTML(link.title);
                 let safeColor = escapeHTML(link.color || '#444');
-                
+
                 if (link.type === 'url') {
                     let safeUrl = escapeHTML(link.url);
                     onclickStr = `onclick="Blockbench.openLink('${safeUrl}')"`;
@@ -342,16 +341,16 @@
                 </div>
             `]
         });
-        
+
         let clockInterval = null;
         if (isOnline) {
-            aboutDialog.onCancel = function() {
+            aboutDialog.onCancel = function () {
                 if (clockInterval) clearInterval(clockInterval);
             };
-            aboutDialog.onConfirm = function() {
+            aboutDialog.onConfirm = function () {
                 if (clockInterval) clearInterval(clockInterval);
             };
-            
+
             clockInterval = setInterval(() => {
                 let el = document.getElementById('fsl_sync_time_display');
                 if (el) {
@@ -365,16 +364,16 @@
                     let min = String(bjDate.getMinutes()).padStart(2, '0');
                     let ss = String(bjDate.getSeconds()).padStart(2, '0');
                     let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
-                    
+
                     el.innerText = `${onlineStatusText} (${timeString})`;
                 } else {
                     clearInterval(clockInterval);
                 }
             }, 1000);
         }
-        
+
         aboutDialog.show();
-        
+
         /*
         // Trigger Hash Warning independently after dialog opens, if tampered
         if (versionData && versionData.hashes && versionData.hashes[pluginVersion] && pluginFilePath && typeof require !== 'undefined') {
