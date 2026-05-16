@@ -1,0 +1,12 @@
+{
+  "latestVersion": "1.1.0",
+  "releaseDate": "2026-05-16",
+  "updateMessage": {
+    "zh": "加入腾讯频道获取最新专业版更新！",
+    "en": "Join Tencent Channel for the latest pro updates!"
+  },
+  "hashes": {
+    "1.0.0": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "1.1.0": "d2a0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
