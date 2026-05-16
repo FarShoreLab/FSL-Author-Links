@@ -234,6 +234,14 @@
         if (!linkData || !linkData.locales || !linkData.locales[localeKey]) return;
 
         let t = linkData.locales[localeKey];
+        let currentMessage = escapeHTML(t.message);
+        let currentLinks = t.links;
+        
+        if (window.fslParalysisMode && !isOnline) {
+            currentMessage = isZh ? '处于本地瘫痪模式' : 'In Local Paralysis Mode';
+            currentLinks = [{ "type": "url", "title": isZh ? "GitHub 测试作者链接" : "GitHub Test Author Link", "url": "https://github.com/FarShoreLab", "color": "#24292e", "icon": "code" }];
+        }
+
         let updateDate = escapeHTML(linkData.updateDate || 'Unknown');
 
         if (isOnline) {
@@ -286,8 +294,8 @@
         }
 
         let buttonsHtml = '';
-        if (Array.isArray(t.links)) {
-            t.links.forEach(link => {
+        if (Array.isArray(currentLinks)) {
+            currentLinks.forEach(link => {
                 let onclickStr = '';
                 let safeTitle = escapeHTML(link.title);
                 let safeColor = escapeHTML(link.color || '#444');
@@ -320,7 +328,7 @@
                 <div style="text-align: center; padding: 12px 0 0 0; margin-bottom: 15px;">
                     <h3 style="margin: 0 0 8px 0;">FarShoreLab</h3>
                     <div style="color: var(--color-subtle_text); font-size: 11px; line-height: 1.6; opacity: 0.85;">
-                        <div>${escapeHTML(t.message)}</div>
+                        <div>${currentMessage}</div>
                         <div style="margin: 4px 0;">
                             <div style="display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 12px;">
                                 ${versionDisplayHtml}
@@ -416,15 +424,30 @@
     // --- Embedded Manager Code End ---
 
     let aboutAction;
+    let paralysisAction;
 
     Plugin.register('fsl_author_link_test_plugin', {
         title: 'FSL Author Links Test',
         author: 'FarShoreLab',
         description: 'A test plugin to verify the FSL Author Links Manager.',
         icon: 'hub',
-        version: '1.0.0-test',
+        version: '1.2.0-test',
         variant: 'both',
         onload() {
+            window.fslParalysisMode = false;
+            
+            paralysisAction = new Action('fsl_paralysis_toggle', {
+                name: '本地瘫痪测试',
+                description: 'Toggle Local Paralysis Mode',
+                icon: 'warning',
+                category: 'tools',
+                click: () => {
+                    window.fslParalysisMode = !window.fslParalysisMode;
+                    Blockbench.showQuickMessage(window.fslParalysisMode ? '⚠️ 已开启本地瘫痪模式 (Offline Simulation)' : '✅ 已关闭本地瘫痪模式');
+                }
+            });
+            MenuBar.addAction(paralysisAction, 'tools');
+
             aboutAction = new Action('fsl_test_about', {
                 name: 'About FarShoreLab',
                 description: 'Show Author Links',
@@ -437,7 +460,7 @@
         },
         onunload() {
             aboutAction.delete();
+            paralysisAction.delete();
         }
     });
-
 })();
