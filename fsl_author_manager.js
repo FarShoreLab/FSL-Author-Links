@@ -69,7 +69,7 @@ const LOCAL_AUTHOR_LINKS = {
             "title": "About Author",
             "message": "Experimentation is a lifestyle",
             "license": "Please read and agree to the LICENSE before use",
-            "overseasWarning": "<div style=\"margin-top: 4px; line-height: 1.5;\">Currently, no overseas sales channels are open.<br/>This plugin is only authorized for use in Mainland China.<br/>For overseas use, please contact the author by email.</div>",
+            "overseasWarning": "<div style=\"margin-top: 4px;\">This plugin is only authorized for use in Mainland China.<br/>For overseas use, please contact the author by email.</div>",
             "links": [
                 { "type": "none", "title": "Patreon (Coming soon)", "color": "#FF424D", "icon": "favorite" },
                 { "type": "url", "title": "Twitter (𝕏)", "url": "https://x.com/FarShoreLab", "color": "#000000", "icon": "𝕏" },
@@ -82,7 +82,9 @@ const LOCAL_AUTHOR_LINKS = {
             ],
             "updateInstructionsHtml": `
                 <div style="padding: 20px 10px; font-size: 13px; line-height: 1.8; color: #ffffff; text-align: center;">
-                    <i class="material-icons" style="font-size: 48px; color: #E57373; margin-bottom: 15px; display: inline-block; line-height: 1;">public</i>
+                    <div style="display: flex; justify-content: center; align-items: center; height: 60px; margin-bottom: 10px;">
+                        <i class="material-icons" style="font-size: 48px; color: #E57373; line-height: 1; display: block; overflow: visible;">public</i>
+                    </div>
                     <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">Currently, no overseas sales channels are open.</div>
                     <div style="opacity: 0.7; font-size: 11px;">
                         This plugin is only authorized for use in Mainland China.<br/>
@@ -152,7 +154,7 @@ function generateGitHubIssueUrl(pluginId, currentVersion, localHash) {
 window.fslShowUpdateInstructions = function () {
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
     let localeKey = isZh ? 'zh' : 'en';
-    
+
     let localesSource = window.fslCurrentLocales || LOCAL_AUTHOR_LINKS.locales;
     let t = localesSource[localeKey] || localesSource['en'] || LOCAL_AUTHOR_LINKS.locales[localeKey];
     let instructionsHtml = t.updateInstructionsHtml || LOCAL_AUTHOR_LINKS.locales[localeKey].updateInstructionsHtml;
@@ -257,7 +259,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
 
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
     let localeKey = isZh ? 'zh' : 'en';
-    
+
     // Cache the loaded locales and update date globally so fslShowUpdateInstructions can access them dynamically
     window.fslCurrentLocales = linkData.locales;
     window.fslCurrentUpdateDate = linkData.updateDate;
@@ -395,7 +397,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
         }, 1000);
     }
 
-    aboutDialog.onOpen = function() {
+    aboutDialog.onOpen = function () {
         setTimeout(() => {
             let $dialog = $(aboutDialog.object);
             let $handle = $dialog.find('.dialog_handle');
