@@ -32,7 +32,7 @@
                     { "type": "url", "title": "Bilibili哔哩哔哩 (主推)", "url": "https://space.bilibili.com/3494365045459688", "color": "#FF6699", "icon": "subscriptions" },
                     { "type": "url", "title": "小红书 (Rednote)", "url": "https://www.xiaohongshu.com/user/profile/64e75d2b000000000200f7f9", "color": "#FF2442", "icon": "bookmark" },
                     { "type": "copy", "title": "FSL 插件频道 (点击复制 ID)", "text": "pd31262197", "color": "#0099FF", "icon": "hub", "copyType": "腾讯频道" },
-                    { "type": "url", "title": "𝕏 (Twitter)", "url": "https://x.com/FarShoreLab", "color": "#000000", "icon": "𝕏" },
+                    { "type": "url", "title": "Twitter (𝕏)", "url": "https://x.com/FarShoreLab", "color": "#000000", "icon": "𝕏" },
                     { "type": "url", "title": "Discord (Under Construction)", "url": "https://discord.gg/H3fhBAZVtQ", "color": "#5865F2", "icon": "forum" },
                     { "type": "url", "title": "GitHub", "url": "https://github.com/FarShoreLab", "color": "#6e5494", "icon": "code" },
                     { "type": "copy", "title": "QQ 闲聊群 1013352982 (点击复制)", "text": "1013352982", "color": "#12B7F5", "icon": "people", "copyType": "QQ 交流群" }
@@ -45,7 +45,7 @@
                 "overseasWarning": "<div style=\"margin-top: 4px;\">This plugin is only authorized for use in Mainland China.<br/>For overseas use, please contact the author by email.</div>",
                 "links": [
                     { "type": "none", "title": "Patreon (Coming soon)", "color": "#FF424D", "icon": "favorite" },
-                    { "type": "url", "title": "𝕏 (Twitter)", "url": "https://x.com/FarShoreLab", "color": "#000000", "icon": "𝕏" },
+                    { "type": "url", "title": "Twitter (𝕏)", "url": "https://x.com/FarShoreLab", "color": "#000000", "icon": "𝕏" },
                     { "type": "url", "title": "Discord", "url": "https://discord.gg/H3fhBAZVtQ", "color": "#5865F2", "icon": "forum" },
                     { "type": "url", "title": "GitHub", "url": "https://github.com/FarShoreLab", "color": "#6e5494", "icon": "code" },
                     { "type": "copy", "title": "farshorelab@gmail.com", "text": "farshorelab@gmail.com", "color": "#4285F4", "icon": "email", "copyType": "Email" },
