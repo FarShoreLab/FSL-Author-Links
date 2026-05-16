@@ -123,8 +123,8 @@ window.fslShowUpdateInstructions = function() {
             <div style="padding: 10px; font-size: 13px; line-height: 1.8; color: #ffffff;">
                 <div style="margin-bottom: 12px;">
                     <span style="color: var(--color-accent); font-weight: bold;">1. </span>
-                    <strong style="color: #ffffff;">${isZh ? '加入 FSL 插件频道，频道号: ' : 'Join FSL Channel, ID: '}</strong>
-                    <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', '${isZh ? '频道 ID' : 'Channel ID'}')">
+                    <strong style="color: #ffffff;">${isZh ? '加入 FSL 腾讯频道，频道号: ' : 'Join FSL Tencent Channel, ID: '}</strong>
+                    <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', '${isZh ? '腾讯频道 ID' : 'Tencent Channel ID'}')">
                         pd31262197
                     </span>
                 </div>
