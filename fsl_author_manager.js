@@ -117,12 +117,30 @@ window.fslShowUpdateInstructions = function() {
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
     new Dialog({
         id: 'fsl_update_instructions',
-        title: isZh ? '获取更新' : 'Get Update',
-        width: 300,
+        title: isZh ? '获取更新步骤' : 'Update Steps',
+        width: 320,
         lines: [`
-            <div style="text-align: center; padding: 10px;">
-                <div style="margin-bottom: 15px;">${isZh ? '请加入我们的腾讯频道获取最新的插件更新：' : 'Please join our Tencent Channel to get the latest updates:'}</div>
-                <div style="font-size: 18px; font-weight: bold; user-select: all; background: var(--color-back); padding: 8px; border-radius: 4px;">pd31262197</div>
+            <div style="padding: 10px; font-size: 13px; line-height: 1.6;">
+                <div style="margin-bottom: 8px; font-weight: bold; color: var(--color-accent);">
+                    ${isZh ? '1. 加入腾讯频道' : '1. Join Tencent Channel'}
+                </div>
+                <div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <div style="font-family: monospace; background: var(--color-back); padding: 4px 8px; border-radius: 4px; flex: 1; text-align: center; border: 1px solid var(--color-border);">pd31262197</div>
+                    <button class="btn" style="min-width: 60px; height: 26px; padding: 0 8px; font-size: 11px; margin: 0;" onclick="window.fslCopyText('pd31262197', '${isZh ? '频道 ID' : 'Channel ID'}')">
+                        ${isZh ? '复制' : 'Copy'}
+                    </button>
+                </div>
+                
+                <div style="margin-bottom: 8px; font-weight: bold; color: var(--color-accent);">
+                    ${isZh ? '2. 联系作者并出具购买记录' : '2. Contact author with purchase record'}
+                </div>
+                <div style="margin-bottom: 12px; font-size: 11px; opacity: 0.8; line-height: 1.4;">
+                    ${isZh ? '进入频道后，私信或在指定板块联系 FarShoreLab 官方。' : 'After joining, contact FarShoreLab via DM or the designated section.'}
+                </div>
+                
+                <div style="font-weight: bold; color: var(--color-accent);">
+                    ${isZh ? '3. 验证通过后获取最新插件' : '3. Get the latest plugin after verification'}
+                </div>
             </div>
         `]
     }).show();
@@ -241,7 +259,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
     let versionDisplayHtml = '';
     if (!isOnline) {
         versionDisplayHtml = `
-            <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+            <span style="color: var(--color-text); font-size: 11px;">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
             <span style="opacity: 0.3;">|</span>
             <span style="opacity: 0.7; font-size: 11px;">${isZh ? '联网检查最新版本' : 'Connect to check latest'}</span>
         `;
@@ -249,13 +267,13 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
         let isLatest = compareSemVer(pluginVersion, versionData.latestVersion) >= 0;
         if (isLatest) {
             versionDisplayHtml = `
-                <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+                <span style="color: var(--color-text); font-size: 11px;">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
                 <span style="opacity: 0.3;">|</span>
                 <span style="color: #4CAF50; font-size: 11px;">${isZh ? '已是最新版本' : 'Latest Version'}</span>
             `;
         } else {
             versionDisplayHtml = `
-                <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+                <span style="color: var(--color-text); font-size: 11px;">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
                 <span style="opacity: 0.3;">|</span>
                 <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4CAF50; font-size: 11px; text-decoration: none; cursor: pointer;">
                     ${isZh ? '点击获取最新版本' : 'Click to get latest'}: v${escapeHTML(versionData.latestVersion)}
@@ -311,7 +329,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
                         </div>
                         <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
-                            <span id="fsl_sync_time_display" style="font-size: 10px; cursor: help;" title="${isZh ? '云端数据最后更新时间' : 'Cloud data last updated'}: ${escapeHTML(linkData.updateDate)}">
+                            <span id="fsl_sync_time_display" style="font-size: 11px; cursor: help;" title="${isZh ? '云端数据最后更新时间' : 'Cloud data last updated'}: ${escapeHTML(linkData.updateDate)}">
                                 ${onlineStatusText} (${updateDate})
                             </span>
                         </div>
