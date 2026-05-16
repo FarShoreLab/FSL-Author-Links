@@ -236,7 +236,7 @@
         let t = linkData.locales[localeKey];
         let currentMessage = escapeHTML(t.message);
         let currentLinks = t.links;
-        
+
         if (window.fslParalysisMode && !isOnline) {
             currentMessage = isZh ? '处于本地瘫痪模式' : 'In Local Paralysis Mode';
             currentLinks = [{ "type": "url", "title": isZh ? "GitHub 测试作者链接" : "GitHub Test Author Link", "url": "https://github.com/FarShoreLab", "color": "#24292e", "icon": "code" }];
@@ -336,7 +336,7 @@
                             <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                             <span id="fsl_sync_time_display" style="font-size: 10px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
-                                ${onlineStatusText} (${updateDate})
+                                ${onlineStatusText} (${escapeHTML(linkData.updateDate)})
                             </span>
                         </div>
                         </div>
@@ -435,7 +435,7 @@
         variant: 'both',
         onload() {
             window.fslParalysisMode = false;
-            
+
             paralysisAction = new Action('fsl_paralysis_toggle', {
                 name: '本地瘫痪测试',
                 description: 'Toggle Local Paralysis Mode',

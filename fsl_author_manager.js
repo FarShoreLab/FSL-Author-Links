@@ -61,10 +61,10 @@ const LOCAL_AUTHOR_LINKS = {
 function escapeHTML(str) {
     if (typeof str !== 'string') return '';
     return str.replace(/&/g, '&amp;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;')
-              .replace(/"/g, '&quot;')
-              .replace(/'/g, '&#39;');
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 // Security: URL Whitelisting helper
@@ -113,7 +113,7 @@ function generateGitHubIssueUrl(pluginId, currentVersion, localHash) {
 }
 */
 
-window.fslShowUpdateInstructions = function() {
+window.fslShowUpdateInstructions = function () {
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
     new Dialog({
         id: 'fsl_update_instructions',
@@ -154,7 +154,7 @@ window.fslShowUpdateInstructions = function() {
 /**
  * Global helper function attached to window for handling clipboard copy within the dialog
  */
-window.fslCopyText = function(text, type) {
+window.fslCopyText = function (text, type) {
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
         navigator.clipboard.writeText(text).then(() => {
@@ -191,26 +191,26 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
     } else {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s forced timeout
-        
+
         const fetchLinksUrl = `https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/links.json?t=${Date.now()}`;
         const fetchVersionUrl = pluginId ? `https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/projects/${pluginId}/version.json?t=${Date.now()}` : null;
-        
+
         try {
             const [linksRes, versionRes] = await Promise.all([
                 fetch(fetchLinksUrl, { cache: "no-store", signal: controller.signal }),
                 fetchVersionUrl ? fetch(fetchVersionUrl, { cache: "no-store", signal: controller.signal }).catch(() => null) : Promise.resolve(null)
             ]);
-            
+
             clearTimeout(timeoutId);
-            
+
             if (linksRes && linksRes.ok) {
                 let serverDateStr = linksRes.headers.get('date');
                 if (serverDateStr) {
                     timeOffset = new Date(serverDateStr).getTime() - Date.now();
                 }
-                
+
                 let parsedData = await linksRes.json();
-                
+
                 // Security: Schema validation to prevent Malformed JSON attacks
                 if (parsedData && parsedData.locales && parsedData.locales.zh && parsedData.locales.en) {
                     let isCompromised = false;
@@ -229,7 +229,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
                     }
                 }
             }
-            
+
             if (versionRes && versionRes.ok) {
                 versionData = await versionRes.json();
             }
@@ -297,7 +297,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
             let onclickStr = '';
             let safeTitle = escapeHTML(link.title);
             let safeColor = escapeHTML(link.color || '#444');
-            
+
             if (link.type === 'url') {
                 let safeUrl = escapeHTML(link.url);
                 onclickStr = `onclick="Blockbench.openLink('${safeUrl}')"`;
@@ -334,7 +334,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
                         <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
                             <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
                             <span id="fsl_sync_time_display" style="font-size: 11px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
-                                ${onlineStatusText} (${updateDate})
+                                ${onlineStatusText} (${escapeHTML(linkData.updateDate)})
                             </span>
                         </div>
                     </div>
@@ -347,13 +347,13 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
             </div>
         `]
     });
-    
+
     // Live clock ticker
     let clockInterval = null;
     if (isOnline) {
-        aboutDialog.onCancel = function() { if (clockInterval) clearInterval(clockInterval); };
-        aboutDialog.onConfirm = function() { if (clockInterval) clearInterval(clockInterval); };
-        
+        aboutDialog.onCancel = function () { if (clockInterval) clearInterval(clockInterval); };
+        aboutDialog.onConfirm = function () { if (clockInterval) clearInterval(clockInterval); };
+
         clockInterval = setInterval(() => {
             let el = document.getElementById('fsl_sync_time_display');
             if (el) {
@@ -370,9 +370,9 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
             } else { clearInterval(clockInterval); }
         }, 1000);
     }
-    
+
     aboutDialog.show();
-    
+
     /*
     // Trigger Hash Warning independently after dialog opens, if tampered
     if (versionData && versionData.hashes && versionData.hashes[pluginVersion] && pluginFilePath && typeof require !== 'undefined') {
