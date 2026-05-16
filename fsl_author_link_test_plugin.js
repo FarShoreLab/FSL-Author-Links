@@ -305,12 +305,12 @@
                 `;
             } else {
                 versionDisplayHtml = `
-                <span style="color: var(--color-text); font-size: 11px;">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
-                <span style="opacity: 0.3;">|</span>
-                <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4CAF50; font-size: 11px; text-decoration: none; cursor: pointer;">
-                    ${isZh ? '点击获取最新版本' : 'Click to get latest'}: v${escapeHTML(versionData.latestVersion)}
-                </a>
-            `;
+                    <span style="color: var(--color-text); font-size: 11px;">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+                    <span style="opacity: 0.3;">|</span>
+                    <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4CAF50; font-size: 11px; text-decoration: none; cursor: pointer;">
+                        ${isZh ? (`点击获取最新版本: v${escapeHTML(versionData.latestVersion)}`) : 'Overseas authorization unavailable'}
+                    </a>
+                `;
             }
         } else {
             versionDisplayHtml = `
@@ -359,11 +359,11 @@
                                 ${versionDisplayHtml}
                             </div>
                             <div style="display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 4px; color: ${onlineStatusColor}; opacity: 0.9;">
-                            <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
-                            <span id="fsl_sync_time_display" style="font-size: 10px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
-                                ${onlineStatusText} ${isOnline ? `(${isZh ? '当前时间' : 'Current Time'}: ${escapeHTML(updateDate)})` : `(${escapeHTML(linkData.updateDate)})`}
-                            </span>
-                        </div>
+                                <i class="material-icons" style="font-size: 13px;">${onlineStatusIcon}</i>
+                                <span id="fsl_sync_time_display" style="font-size: 11px; cursor: help;" title="${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${escapeHTML(updateDate)}">
+                                    ${onlineStatusText} (${isZh ? '当前时间' : 'Last Synced'}: ${isZh ? escapeHTML(updateDate) : escapeHTML(linkData.updateDate.split(' ')[0])})
+                                </span>
+                            </div>
                         </div>
                         <div>${escapeHTML(t.license)}</div>
                         ${t.overseasWarning ? t.overseasWarning : ''}
@@ -396,13 +396,15 @@
                     let HH = String(bjDate.getHours()).padStart(2, '0');
                     let min = String(bjDate.getMinutes()).padStart(2, '0');
                     let ss = String(bjDate.getSeconds()).padStart(2, '0');
-                    let timeString = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
-
-                    el.innerText = `${onlineStatusText} (${isZh ? '当前时间' : 'Current Time'}: ${timeString})`;
-                    el.title = `${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${timeString}`;
-                } else {
-                    clearInterval(clockInterval);
-                }
+                    let timeStr = `${yyyy}-${mm}-${dd} ${HH}:${min}:${ss}`;
+                    if (isZh) {
+                        el.innerText = `${onlineStatusText} (当前时间: ${timeStr})`;
+                    } else {
+                        // For English, keep it static to prevent flashing, only update the hover title
+                        el.innerText = `${onlineStatusText} (Last Synced: ${escapeHTML(linkData.updateDate.split(' ')[0])})`;
+                    }
+                    el.title = `${isZh ? '云端数据最后抓取时间' : 'Cloud data last fetched'}: ${timeStr}`;
+                } else { clearInterval(clockInterval); }
             }, 1000);
         }
 
