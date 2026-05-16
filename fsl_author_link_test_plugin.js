@@ -180,6 +180,7 @@
             id: 'fsl_update_instructions',
             title: isZh ? '获取更新步骤' : 'Update Steps',
             width: 340,
+            buttons: [],
             lines: [instructionsHtml + dateFooter]
         }).show();
     };
