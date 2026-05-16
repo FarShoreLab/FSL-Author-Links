@@ -82,7 +82,7 @@
                 ],
                 "updateInstructionsHtml": `
                     <div style="padding: 20px 10px; font-size: 13px; line-height: 1.8; color: #ffffff; text-align: center;">
-                        <i class="material-icons" style="font-size: 48px; color: #E57373; margin-bottom: 15px;">language</i>
+                        <i class="material-icons" style="font-size: 48px; color: #E57373; margin-bottom: 15px; display: inline-block; line-height: 1;">public</i>
                         <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">Currently, no overseas sales channels are open.</div>
                         <div style="opacity: 0.7; font-size: 11px;">
                             This plugin is only authorized for use in Mainland China.<br/>
