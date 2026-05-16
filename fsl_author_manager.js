@@ -36,7 +36,34 @@ const LOCAL_AUTHOR_LINKS = {
                 { "type": "url", "title": "Discord (Under Construction)", "url": "https://discord.gg/H3fhBAZVtQ", "color": "#5865F2", "icon": "forum" },
                 { "type": "url", "title": "GitHub", "url": "https://github.com/FarShoreLab", "color": "#6e5494", "icon": "code" },
                 { "type": "copy", "title": "QQ 闲聊群 1013352982 (点击复制)", "text": "1013352982", "color": "#12B7F5", "icon": "people", "copyType": "QQ 交流群" }
-            ]
+            ],
+            "updateInstructionsHtml": `
+                <div style="padding: 10px; font-size: 13px; line-height: 1.8; color: #ffffff;">
+                    <div style="margin-bottom: 12px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">1. </span>
+                        <strong style="color: #ffffff;">加入 FSL 腾讯频道</strong>
+                        <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;">
+                            点击复制频道号: 
+                            <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', '腾讯频道 ID')">pd31262197</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">2. </span>
+                        <strong style="color: #ffffff;">联系作者并发送购买记录截屏</strong>
+                        <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
+                            进入频道后，可直接发帖（无板块要求）或私信联系 FarShoreLab 官方。
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 4px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">3. </span>
+                        <strong style="color: #ffffff;">等待审核并获取插件</strong>
+                        <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
+                            审核通过后，作者将第一时间发送最新版本插件给您。
+                        </div>
+                    </div>
+                </div>`
         },
         "en": {
             "title": "About Author",
@@ -52,7 +79,34 @@ const LOCAL_AUTHOR_LINKS = {
                 { "type": "url", "title": "Bilibili", "url": "https://space.bilibili.com/3494365045459688", "color": "#FF6699", "icon": "subscriptions" },
                 { "type": "url", "title": "Rednote", "url": "https://www.xiaohongshu.com/user/profile/64e75d2b000000000200f7f9", "color": "#FF2442", "icon": "bookmark" },
                 { "type": "copy", "title": "Tencent Channel (Click to copy ID)", "text": "pd31262197", "color": "#0099FF", "icon": "hub", "copyType": "Tencent Channel" }
-            ]
+            ],
+            "updateInstructionsHtml": `
+                <div style="padding: 10px; font-size: 13px; line-height: 1.8; color: #ffffff;">
+                    <div style="margin-bottom: 12px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">1. </span>
+                        <strong style="color: #ffffff;">Join FSL Tencent Channel</strong>
+                        <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;">
+                            Click to copy ID: 
+                            <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', 'Tencent Channel ID')">pd31262197</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">2. </span>
+                        <strong style="color: #ffffff;">Contact author and send purchase screenshot</strong>
+                        <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
+                            In the channel, post directly (any section) or DM FarShoreLab.
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 4px;">
+                        <span style="color: var(--color-accent); font-weight: bold;">3. </span>
+                        <strong style="color: #ffffff;">Wait for verification and get plugin</strong>
+                        <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
+                            After approval, the author will send the latest plugin version to you.
+                        </div>
+                    </div>
+                </div>`
         }
     }
 };
@@ -115,38 +169,17 @@ function generateGitHubIssueUrl(pluginId, currentVersion, localHash) {
 
 window.fslShowUpdateInstructions = function () {
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
+    let localeKey = isZh ? 'zh' : 'en';
+    
+    let localesSource = window.fslCurrentLocales || LOCAL_AUTHOR_LINKS.locales;
+    let t = localesSource[localeKey] || localesSource['en'] || LOCAL_AUTHOR_LINKS.locales[localeKey];
+    let instructionsHtml = t.updateInstructionsHtml || LOCAL_AUTHOR_LINKS.locales[localeKey].updateInstructionsHtml;
+
     new Dialog({
         id: 'fsl_update_instructions',
         title: isZh ? '获取更新步骤' : 'Update Steps',
         width: 340,
-        lines: [`
-            <div style="padding: 10px; font-size: 13px; line-height: 1.8; color: #ffffff;">
-                <div style="margin-bottom: 12px;">
-                    <span style="color: var(--color-accent); font-weight: bold;">1. </span>
-                    <strong style="color: #ffffff;">${isZh ? '加入 FSL 腾讯频道' : 'Join FSL Tencent Channel'}</strong>
-                    <div style="font-size: 11px; opacity: 0.8; margin-top: 2px;">
-                        ${isZh ? '点击复制频道号: ' : 'Click to copy ID: '}
-                        <span style="color: var(--color-accent); cursor: pointer; text-decoration: underline; font-weight: bold;" onclick="window.fslCopyText('pd31262197', '${isZh ? '腾讯频道 ID' : 'Tencent Channel ID'}')">pd31262197</span>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 12px;">
-                    <span style="color: var(--color-accent); font-weight: bold;">2. </span>
-                    <strong style="color: #ffffff;">${isZh ? '联系作者并发送购买记录截屏' : 'Contact author and send purchase screenshot'}</strong>
-                    <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
-                        ${isZh ? '进入频道后，可直接发帖（无板块要求）或私信联系 FarShoreLab 官方。' : 'In the channel, post directly (any section) or DM FarShoreLab.'}
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 4px;">
-                    <span style="color: var(--color-accent); font-weight: bold;">3. </span>
-                    <strong style="color: #ffffff;">${isZh ? '等待审核并获取插件' : 'Wait for verification and get plugin'}</strong>
-                    <div style="font-size: 11px; opacity: 0.7; line-height: 1.4; margin-top: 4px;">
-                        ${isZh ? '审核通过后，作者将第一时间发送最新版本插件给您。' : 'After approval, the author will send the latest plugin version to you.'}
-                    </div>
-                </div>
-            </div>
-        `]
+        lines: [instructionsHtml]
     }).show();
 };
 // --- FSL Version Manager Utils End ---
@@ -238,6 +271,10 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
 
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
     let localeKey = isZh ? 'zh' : 'en';
+    
+    // Cache the loaded locales globally so fslShowUpdateInstructions can access them dynamically
+    window.fslCurrentLocales = linkData.locales;
+
     let t = linkData.locales[localeKey];
     let updateDate = escapeHTML(linkData.updateDate || 'Unknown');
 
