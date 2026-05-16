@@ -150,59 +150,50 @@
             isOnline = false;
         } else {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s strict timeout
-
+            const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s forced timeout
+            
+            const fetchLinksUrl = `https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/links.json?t=${Date.now()}`;
+            const fetchVersionUrl = pluginId ? `https://raw.githubusercontent.com/FarShoreLab/FSL-Author-Links/main/projects/${pluginId}/version.json?t=${Date.now()}` : null;
+            
             try {
-                // Append timestamp to forcefully bypass browser cache
-                const fetchUrl = FSL_AUTHOR_LINKS_URL + "?t=" + Date.now();
-                const response = await fetch(fetchUrl, { 
-                    cache: "no-store", 
-                    signal: controller.signal 
-                });
+                const [linksRes, versionRes] = await Promise.all([
+                    fetch(fetchLinksUrl, { cache: "no-store", signal: controller.signal }),
+                    fetchVersionUrl ? fetch(fetchVersionUrl, { cache: "no-store", signal: controller.signal }).catch(() => null) : Promise.resolve(null)
+                ]);
+                
                 clearTimeout(timeoutId);
                 
-                if (response.ok) {
-                    let serverDateStr = response.headers.get('date');
+                if (linksRes && linksRes.ok) {
+                    let serverDateStr = linksRes.headers.get('date');
                     if (serverDateStr) {
                         timeOffset = new Date(serverDateStr).getTime() - Date.now();
                     }
                     
-                    let parsedData = await response.json();
+                    let parsedData = await linksRes.json();
                     
                     // Security: Schema validation to prevent Malformed JSON attacks
-                    if (parsedData && parsedData.locales && parsedData.updateDate) {
-                        // Security: Whitelist validation (Anti-Phishing / MITM)
+                    if (parsedData && parsedData.locales && parsedData.locales.zh && parsedData.locales.en) {
                         let isCompromised = false;
                         for (let locale in parsedData.locales) {
                             let links = parsedData.locales[locale].links;
                             if (Array.isArray(links)) {
-                                if (links.length > 20) { // Limit array size
-                                    isCompromised = true; break;
-                                }
+                                if (links.length > 20) { isCompromised = true; break; }
                                 for (let link of links) {
-                                    if (link.type === 'url' && !isUrlSafe(link.url)) {
-                                        console.warn("FSL Security Warning: Untrusted URL detected in payload -", link.url);
-                                        isCompromised = true;
-                                    }
+                                    if (link.type === 'url' && !isUrlSafe(link.url)) { isCompromised = true; break; }
                                 }
                             }
                         }
-
                         if (!isCompromised) {
                             linkData = parsedData;
-                            versionData = parsedData.versions || null;
                             isOnline = true;
-                        } else {
-                            console.error("FSL Security: Data payload rejected due to validation failure. Falling back to secure local data.");
                         }
-                    } else {
-                        console.error("FSL Security: Invalid data schema. Falling back to secure local data.");
                     }
                 }
-            } catch (e) {
-                clearTimeout(timeoutId);
-                console.warn("FSL Author Links: Network request failed or timed out.");
-            }
+                
+                if (versionRes && versionRes.ok) {
+                    versionData = await versionRes.json();
+                }
+            } catch (e) { clearTimeout(timeoutId); }
         }
 
         let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
