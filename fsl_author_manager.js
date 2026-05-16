@@ -175,11 +175,14 @@ window.fslShowUpdateInstructions = function () {
     let t = localesSource[localeKey] || localesSource['en'] || LOCAL_AUTHOR_LINKS.locales[localeKey];
     let instructionsHtml = t.updateInstructionsHtml || LOCAL_AUTHOR_LINKS.locales[localeKey].updateInstructionsHtml;
 
+    let updateDateStr = window.fslCurrentUpdateDate || LOCAL_AUTHOR_LINKS.updateDate;
+    let dateFooter = `<div style="text-align: right; font-size: 10px; opacity: 0.4; margin-top: 10px; padding-right: 5px;">${isZh ? '流程最后同步' : 'Steps last synced'}: ${escapeHTML(updateDateStr)}</div>`;
+
     new Dialog({
         id: 'fsl_update_instructions',
         title: isZh ? '获取更新步骤' : 'Update Steps',
         width: 340,
-        lines: [instructionsHtml]
+        lines: [instructionsHtml + dateFooter]
     }).show();
 };
 // --- FSL Version Manager Utils End ---
@@ -272,8 +275,9 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
     let isZh = typeof Language !== 'undefined' && Language.code && Language.code.startsWith('zh');
     let localeKey = isZh ? 'zh' : 'en';
     
-    // Cache the loaded locales globally so fslShowUpdateInstructions can access them dynamically
+    // Cache the loaded locales and update date globally so fslShowUpdateInstructions can access them dynamically
     window.fslCurrentLocales = linkData.locales;
+    window.fslCurrentUpdateDate = linkData.updateDate;
 
     let t = linkData.locales[localeKey];
     let updateDate = escapeHTML(linkData.updateDate || 'Unknown');
