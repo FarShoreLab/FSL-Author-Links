@@ -6,7 +6,7 @@
     "en": "Join Tencent Channel for the latest pro updates!"
   },
   "hashes": {
-    "1.0.0-test": "test_hash_to_trigger_tamper_warning",
+    "1.0.0-test": "c1e9df05882fabb391fe8d0dc03ad763cc9d9bc50aeeab98a8f70562cb3c4f39",
     "1.1.0": "d2a0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   }
 }

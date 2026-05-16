@@ -226,7 +226,7 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
     let versionDisplayHtml = '';
     if (!isOnline) {
         versionDisplayHtml = `
-            <span>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+            <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
             <span style="opacity: 0.3;">|</span>
             <span style="opacity: 0.7; font-size: 11px;">${isZh ? '联网检查最新版本' : 'Connect to check latest'}</span>
         `;
@@ -234,13 +234,13 @@ async function showFslAuthorDialog(pluginId, pluginVersion = 'Unknown', pluginFi
         let isLatest = compareSemVer(pluginVersion, versionData.latestVersion) >= 0;
         if (isLatest) {
             versionDisplayHtml = `
-                <span>${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
+                <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
                 <span style="opacity: 0.3;">|</span>
                 <span style="color: #4CAF50; font-size: 11px;">${isZh ? '已是最新版本' : 'Latest Version'}</span>
             `;
         } else {
             versionDisplayHtml = `
-                <span>${isZh ? '当前版本' : 'Current Version'}: <span style="text-decoration: line-through; opacity: 0.7;">${escapeHTML(pluginVersion)}</span></span>
+                <span style="color: var(--color-text);">${isZh ? '当前版本' : 'Current Version'}: ${escapeHTML(pluginVersion)}</span>
                 <span style="opacity: 0.3;">|</span>
                 <span style="color: #E57373; font-size: 11px;">${isZh ? '最新版本' : 'Latest'}: ${escapeHTML(versionData.latestVersion)}</span>
                 <a href="javascript:void(0)" onclick="window.fslShowUpdateInstructions()" style="color: #4285F4; font-size: 11px; text-decoration: underline; margin-left: 4px; cursor: pointer;">${isZh ? '获取最新版本' : 'Get Update'}</a>
