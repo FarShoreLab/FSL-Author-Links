@@ -83,7 +83,7 @@ const LOCAL_AUTHOR_LINKS = {
             "updateInstructionsHtml": `
                 <div style="padding: 20px 10px; font-size: 13px; line-height: 1.8; color: #ffffff; text-align: center;">
                     <div style="display: flex; justify-content: center; align-items: center; height: 60px; margin-bottom: 10px;">
-                        <i class="material-icons" style="font-size: 48px; color: #E57373; line-height: 1; display: block; overflow: visible;">public</i>
+                        <i class="material-icons" style="font-size: 48px; color: #E57373; line-height: 1; display: block; overflow: visible;">language</i>
                     </div>
                     <div style="font-weight: bold; font-size: 14px; margin-bottom: 10px;">Currently, no overseas sales channels are open.</div>
                     <div style="opacity: 0.7; font-size: 11px;">
